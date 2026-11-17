@@ -1,9 +1,9 @@
 {
   "name": "steplab",
-  "displayName": "StepLab \u2014 Codelabs from Markdown",
+  "displayName": "StepLab: Codelabs from Markdown",
   "description": "Write a step-by-step codelab in one markdown file (## Step 0, ## Step 1\u2026) and preview it live: steps, timer, slides, YouTube, copyable code and a finish line. Export it as one HTML file.",
-  "version": "0.1.0",
-  "publisher": "deepasubramanian",
+  "version": "0.1.2",
+  "publisher": "sdkdeepa",
   "author": {
     "name": "Deepa Subramanian"
   },

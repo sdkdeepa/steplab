@@ -1,12 +1,12 @@
 ---
-title: StepLab: StepLab: workshops, step by step
+title: StepLab: workshops, step by step
 author: Your Name                                    # you: shown as the author and in the copyright line
 linkedin: https://www.linkedin.com/in/your-profile   # optional: a LinkedIn link next to the copyright
 copyright: © {year} {author}. All rights reserved.   # optional: write "none" to hide the copyright line
 copyright_position: both                             # top, bottom or both
 ---
 
-# StepLab: StepLab: workshops, step by step
+# StepLab: workshops, step by step
 
 Anything above "Step 1" is not shown as a step. Use it for notes to yourself.
 
