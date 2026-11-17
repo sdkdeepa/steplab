@@ -1,0 +1,43 @@
+{
+  "StepLab: step": {
+    "prefix": "step",
+    "body": ["## Step ${1:1}: ${2:Title}", "Duration: ${3:5}", "", "$0"],
+    "description": "A new StepLab step (tip: StepLab: Insert Next Step picks the number for you)"
+  },
+  "StepLab: overview (Step 0)": {
+    "prefix": "step0",
+    "body": ["## Step 0: Overview", "Duration: ${1:2}", "", "${2:What you'll build and what you need.}", "", "### What you'll learn", "- $0"],
+    "description": "Step 0 — overview / introduction"
+  },
+  "StepLab: front matter": {
+    "prefix": "steplab",
+    "body": [
+      "---",
+      "title: ${1:My codelab}",
+      "author: ${2:Your Name}                                    # you: shown as the author and in the copyright line",
+      "linkedin: ${3:https://www.linkedin.com/in/your-profile}   # optional",
+      "copyright: © {year} {author}. All rights reserved.   # optional: write \"none\" to hide it",
+      "copyright_position: both                             # top, bottom or both",
+      "---",
+      "",
+      "## Step 0: Overview",
+      "Duration: 2",
+      "",
+      "$0"
+    ],
+    "description": "Start a new StepLab lab"
+  },
+  "StepLab: slides": {
+    "prefix": "slides",
+    "body": ["```slides", "title: ${1:My talk}", "${2:labs/images/slide-1.png} | ${3:Caption}", "${4:labs/images/slide-2.png}", "```", "$0"],
+    "description": "Slide deck with arrow buttons (or paste a Google Slides / PowerPoint link)"
+  },
+  "StepLab: YouTube": {
+    "prefix": "youtube",
+    "body": ["```youtube", "title: ${1:Video title}", "${2:https://youtu.be/VIDEO_ID}", "```", "$0"],
+    "description": "Embed a YouTube video"
+  },
+  "StepLab: note": { "prefix": "note", "body": ["> Note: $0"], "description": "Note callout" },
+  "StepLab: tip": { "prefix": "tip", "body": ["> Tip: $0"], "description": "Tip callout" },
+  "StepLab: warning": { "prefix": "warning", "body": ["> Warning: $0"], "description": "Warning callout" }
+}
