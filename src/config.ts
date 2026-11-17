@@ -3,8 +3,7 @@
  */
 export const CREATOR = {
   name: 'Deepa Subramanian',
-  /** Full LinkedIn profile URL, e.g. https://www.linkedin.com/in/your-handle */
-  linkedin: 'https://www.linkedin.com/in/REPLACE-WITH-YOUR-HANDLE',
+  linkedin: 'https://www.linkedin.com/in/sdkdeepa',
 }
 
 /** True once `linkedin` above has been set to a real profile. */
