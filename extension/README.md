@@ -9,7 +9,7 @@ Write a step-by-step codelab in **one markdown file** and see it as an interacti
 - **Export as HTML.** Saves one self-contained file, with images packed in, that you can host anywhere or send to attendees.
 - **New Lab from Template.** Opens a lab that demonstrates every feature.
 - **Insert Next Step** (`Ctrl+Alt+S` / `Cmd+Alt+S`) adds `## Step N:` with the right number.
-- **Snippets:** `steplab` (new lab), `step0`, `step`, `slides`, `youtube`, `note`, `tip`, `warning`.
+- **Snippets:** `steplab` (new lab), `step0`, `step`, `slides`, `youtube`, `note`, `tip`, `warning`. In markdown files, type the name and press `Ctrl+Space` to see them (markdown hides suggestions by default).
 - **Warnings** for out-of-order step numbers and image paths that don't exist.
 - **Step outline** in the Outline view and Go to Symbol (`Ctrl+Shift+O` / `Cmd+Shift+O`).
 

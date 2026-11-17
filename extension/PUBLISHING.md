@@ -12,7 +12,7 @@ Then open any `.md` lab and press ▶ in the editor title bar, or `Cmd/Ctrl+Alt+
 ## 1. Before publishing
 
 In `extension/package.json`:
-- `publisher`: currently `deepasubramanian`. It must exactly match the publisher ID you create below.
+- `publisher`: currently `sdkdeepa`. It must exactly match the publisher ID you create below.
 - `repository` and `bugs`: replace `sdkdeepa` with your GitHub username or org.
 - Bump `version` for every release (0.1.0 → 0.1.1 …) and add a line to `CHANGELOG.md`.
 
@@ -33,7 +33,7 @@ npm run package        # creates steplab-<version>.vsix
 5. Create your namespace. It must equal `publisher` in package.json:
 
    ```bash
-   npx ovsx create-namespace deepasubramanian -p <OPEN_VSX_TOKEN>
+   npx ovsx create-namespace sdkdeepa -p <OPEN_VSX_TOKEN>
    ```
 
    Optional: claim ownership of the namespace, so no one else can publish under it. See the Open VSX wiki page "Namespace Access".
@@ -46,11 +46,11 @@ npx ovsx publish steplab-0.1.0.vsix -p <OPEN_VSX_TOKEN>
 
 ## 3. Visual Studio Marketplace (for VS Code), one-time setup
 
-1. Sign in at **marketplace.visualstudio.com/manage** with a Microsoft account and create a publisher with ID `deepasubramanian`.
+1. Sign in at **marketplace.visualstudio.com/manage** with a Microsoft account and create a publisher with ID `sdkdeepa`.
 2. Either upload the `.vsix` on that page (**New extension → Visual Studio Code**), or publish from the terminal with an Azure DevOps Personal Access Token that has the **Marketplace → Manage** scope:
 
    ```bash
-   npx vsce login deepasubramanian
+   npx vsce login sdkdeepa
    npx vsce publish --no-dependencies
    ```
 
