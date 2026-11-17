@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+<rect width="1280" height="720" fill="#0b0d0f"/>
+<rect x="0" y="0" width="1280" height="10" fill="#e8251a"/>
+<text x="96" y="150" font-size="26" font-weight="700" fill="#e8251a" font-family="Inter, Helvetica Neue, Arial, sans-serif">RICH MEDIA</text>
+<text x="96" y="250" font-size="68" font-weight="800" fill="#ffffff" font-family="Inter, Helvetica Neue, Arial, sans-serif">Slides and videos</text>
+<text x="96" y="332" font-size="68" font-weight="800" fill="#ffffff" font-family="Inter, Helvetica Neue, Arial, sans-serif">inside any step</text>
+<text x="96" y="430" font-size="30" fill="#aab4bd" font-family="Inter, Helvetica Neue, Arial, sans-serif">Image decks get arrow buttons.</text><text x="96" y="476" font-size="30" fill="#aab4bd" font-family="Inter, Helvetica Neue, Arial, sans-serif">YouTube links become players.</text>
+<g transform="translate(800 170)"><rect width="380" height="250" rx="24" fill="#1b1e21"/><circle cx="190" cy="125" r="56" fill="#e8251a"/><path d="M172 98 L218 125 L172 152 Z" fill="#fff"/>
+<rect x="0" y="280" width="170" height="96" rx="14" fill="#2b3035"/><rect x="210" y="280" width="170" height="96" rx="14" fill="#2b3035"/>
+<path d="M60 312 l-18 16 18 16" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M320 312 l18 16 -18 16" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="96" y="664" font-size="22" fill="#aab4bd" font-family="Inter, Helvetica Neue, Arial, sans-serif">StepLab · sample deck</text>
+<text x="1184" y="664" font-size="22" fill="#aab4bd" text-anchor="end" font-family="Inter, Helvetica Neue, Arial, sans-serif">3 / 4</text>
+</svg>

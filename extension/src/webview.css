@@ -1,0 +1,42 @@
+/* Preview panel: match the editor's own theme and fonts instead of the website's. */
+:root,
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+  --bg: var(--vscode-editor-background);
+  --paper: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  --text: var(--vscode-editor-foreground);
+  --mute: var(--vscode-descriptionForeground);
+  --line: var(--vscode-widget-border, var(--vscode-editorGroup-border, #8884));
+  --soft: var(--vscode-textBlockQuote-background, #8881);
+  --card: var(--paper);
+  --display: var(--vscode-font-family), 'Inter Tight', Inter, system-ui, sans-serif;
+  --mono: var(--vscode-editor-font-family), 'JetBrains Mono', ui-monospace, monospace;
+}
+:root[data-theme='dark'] { color-scheme: dark }
+:root[data-theme='light'] { color-scheme: light }
+body {
+  font-family: var(--vscode-font-family), Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 0;
+}
+.layout { padding-top: 18px }
+.lab-head h1 { font-size: clamp(22px, 4vw, 32px) }
+.sheet { box-shadow: none }
+.pager { background: color-mix(in srgb, var(--bg) 90%, transparent) }
+.btn-ink { background: var(--vscode-button-background); color: var(--vscode-button-foreground) }
+.btn-outline { color: var(--text); border-color: var(--line) }
+.warn-box { background: var(--vscode-inputValidation-warningBackground, #fff4d6); color: var(--text); border: 1px solid var(--vscode-inputValidation-warningBorder, #e0b400) }
+.empty { max-width: 560px; margin: 15vh auto; padding: 0 20px; text-align: center; color: var(--mute) }
+.empty h2 { color: var(--text) }
+.empty code { background: var(--soft); padding: 2px 6px; border-radius: 5px }
+/* the side panel is narrow: always use the compact step strip */
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: minmax(0, 1fr) }
+  .rail ol { position: static; display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 8px }
+  .rail li::after { display: none }
+  .rail .rail-text { display: none }
+  .rail button { padding: 4px; min-width: 40px; justify-content: center }
+  .rail li.on button { box-shadow: none; background: transparent }
+  .lab-head { text-align: left }
+}

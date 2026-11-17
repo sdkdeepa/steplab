@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+<rect width="1280" height="720" fill="#ffffff"/>
+<rect x="0" y="0" width="1280" height="10" fill="#e8251a"/>
+<text x="96" y="150" font-size="26" font-weight="700" fill="#e8251a" font-family="Inter, Helvetica Neue, Arial, sans-serif">WELCOME</text>
+<text x="96" y="250" font-size="68" font-weight="800" fill="#0b0d0f" font-family="Inter, Helvetica Neue, Arial, sans-serif">One markdown file.</text>
+<text x="96" y="332" font-size="68" font-weight="800" fill="#0b0d0f" font-family="Inter, Helvetica Neue, Arial, sans-serif">A whole workshop.</text>
+<text x="96" y="430" font-size="30" fill="#56606a" font-family="Inter, Helvetica Neue, Arial, sans-serif">Write steps as "## Step 1", "## Step 2".</text><text x="96" y="476" font-size="30" fill="#56606a" font-family="Inter, Helvetica Neue, Arial, sans-serif">StepLab does the rest.</text>
+<rect x="820" y="400" width="80" height="120" rx="10" fill="#d5dbe0"/><rect x="930" y="300" width="80" height="220" rx="10" fill="#9aa5ae"/><rect x="1040" y="160" width="80" height="360" rx="10" fill="#e8251a"/>
+<text x="96" y="664" font-size="22" fill="#56606a" font-family="Inter, Helvetica Neue, Arial, sans-serif">StepLab · sample deck</text>
+<text x="1184" y="664" font-size="22" fill="#56606a" text-anchor="end" font-family="Inter, Helvetica Neue, Arial, sans-serif">1 / 4</text>
+</svg>

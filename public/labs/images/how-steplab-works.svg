@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420">
+<rect width="1200" height="420" rx="24" fill="#eef1f3"/>
+<g font-family="Inter, Helvetica Neue, Arial, sans-serif">
+<rect x="60" y="120" width="250" height="180" rx="20" fill="#fff" stroke="#0b0d0f" stroke-width="3"/>
+<text x="185" y="200" font-size="34" font-weight="800" text-anchor="middle" fill="#0b0d0f">my-lab.md</text>
+<text x="185" y="245" font-size="22" text-anchor="middle" fill="#56606a">Step 1, Step 2…</text>
+<rect x="475" y="120" width="250" height="180" rx="20" fill="#0b0d0f"/>
+<text x="600" y="200" font-size="34" font-weight="800" text-anchor="middle" fill="#fff">StepLab</text>
+<text x="600" y="245" font-size="22" text-anchor="middle" fill="#aab4bd">runs in the browser</text>
+<rect x="890" y="70" width="250" height="120" rx="20" fill="#fff" stroke="#e8251a" stroke-width="3"/>
+<text x="1015" y="125" font-size="28" font-weight="800" text-anchor="middle" fill="#0b0d0f">Interactive lab</text>
+<text x="1015" y="160" font-size="20" text-anchor="middle" fill="#56606a">steps · progress · finish</text>
+<rect x="890" y="230" width="250" height="120" rx="20" fill="#e8251a"/>
+<text x="1015" y="285" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">one .html file</text>
+<text x="1015" y="320" font-size="20" text-anchor="middle" fill="#ffd9d6">download &amp; host anywhere</text>
+</g>
+<g stroke="#e8251a" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M320 210 H460"/><path d="M445 196 l15 14 -15 14"/>
+<path d="M735 190 C800 190 810 130 875 130"/><path d="M862 118 l14 12 -16 10"/>
+<path d="M735 230 C800 230 810 290 875 290"/><path d="M860 280 l16 10 -14 12"/>
+</g></svg>

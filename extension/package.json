@@ -1,0 +1,151 @@
+{
+  "name": "steplab",
+  "displayName": "StepLab \u2014 Codelabs from Markdown",
+  "description": "Write a step-by-step codelab in one markdown file (## Step 0, ## Step 1\u2026) and preview it live: steps, timer, slides, YouTube, copyable code and a finish line. Export it as one HTML file.",
+  "version": "0.1.0",
+  "publisher": "deepasubramanian",
+  "author": {
+    "name": "Deepa Subramanian"
+  },
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#0b0d0f",
+    "theme": "dark"
+  },
+  "homepage": "https://deepasubramanian.dev/steplab/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sdkdeepa/steplab"
+  },
+  "bugs": {
+    "url": "https://github.com/sdkdeepa/steplab/issues"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Education",
+    "Visualization",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "codelab",
+    "tutorial",
+    "workshop",
+    "markdown",
+    "steps",
+    "gdg",
+    "teaching",
+    "antigravity"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "steplab.openPreview",
+        "title": "Open Preview to the Side",
+        "category": "StepLab",
+        "icon": "$(play)"
+      },
+      {
+        "command": "steplab.exportHtml",
+        "title": "Export as HTML",
+        "category": "StepLab",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "steplab.newLab",
+        "title": "New Lab from Template",
+        "category": "StepLab"
+      },
+      {
+        "command": "steplab.insertStep",
+        "title": "Insert Next Step",
+        "category": "StepLab"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "steplab.openPreview",
+          "when": "editorLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "steplab.openPreview",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "steplab.insertStep",
+          "when": "editorLangId == markdown"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "steplab.openPreview",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l",
+        "when": "editorLangId == markdown"
+      },
+      {
+        "command": "steplab.insertStep",
+        "key": "ctrl+alt+s",
+        "mac": "cmd+alt+s",
+        "when": "editorTextFocus && editorLangId == markdown"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "markdown",
+        "path": "./snippets/steplab.code-snippets"
+      }
+    ],
+    "configuration": {
+      "title": "StepLab",
+      "properties": {
+        "steplab.followCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the step your cursor is in."
+        },
+        "steplab.lint": {
+          "type": "boolean",
+          "default": true,
+          "description": "Warn about out-of-order step numbers and missing images."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit -p .",
+    "package": "npm run build && vsce package --no-dependencies",
+    "publish:vscode": "vsce publish --no-dependencies",
+    "publish:openvsx": "ovsx publish *.vsix",
+    "vscode:prepublish": "node build.mjs"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.4",
+    "dompurify": "^3.4.18",
+    "highlight.js": "^11.12.0",
+    "marked": "^18.2.1"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^26.6.6",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^4.1.1",
+    "esbuild": "^0.28.2",
+    "ovsx": "^1.4.0",
+    "typescript": "^7.0.2"
+  }
+}
