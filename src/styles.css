@@ -193,7 +193,7 @@ button { font: inherit; cursor: pointer }
 
 /* lab title: top of the page, centered on desktop, left on phones */
 .lab-head { grid-column: 1 / -1; text-align: center; padding: 4px 0 6px }
-.lab-head h1 { font-size: clamp(26px, 3.2vw, 38px); font-weight: 800; margin: 0 auto 6px; max-width: 24ch }
+.lab-head h1 { font-size: clamp(26px, 3.2vw, 38px); font-weight: 800; margin: 0 auto 6px; max-width: 46ch; text-wrap: balance }
 .lab-head p { margin: 0; color: var(--mute); font-size: 15px; font-variant-numeric: tabular-nums }
 .bar-actions { display: flex; gap: 8px }
 .progress { position: sticky; top: 64px; z-index: 19; height: 4px; background: var(--line) }
