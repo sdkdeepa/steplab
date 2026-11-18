@@ -9,13 +9,18 @@ const INTRO = /^(overview|introduction|intro|before you begin|welcome)\b/i
 /** True when a file looks like a CLaaT codelab that hasn't been converted yet. */
 export function looksLikeClaat(src: string): boolean {
   const text = src.replace(/\r\n?/g, '\n')
-  if (STEP_HEADING.test(text)) return false
+  if (/^---\s*$/m.test(text.split('\n')[0] ?? '')) return false // StepLab front matter
   const head = text.split(/^#\s/m)[0]
   const meta = /^(id|authors|summary|status|categories|feedback link)\s*:/gim
   const metaCount = (head.match(meta) || []).length
   const hasAsides = /<aside\s+class=["'](positive|negative)["']/i.test(text)
   const hasSteps = /^##\s+\S/m.test(text)
-  return hasSteps && (metaCount >= 2 || hasAsides)
+  return hasSteps && (metaCount >= 2 || (hasAsides && !STEP_HEADING.test(text)))
+}
+
+/** "Step 1 · Open AI Studio" → "Open AI Studio". CLaaT authors often number steps by hand. */
+export function stripStepPrefix(name: string): string {
+  return name.replace(/^step\s*\d+\s*[:.)\-–—·•|]?\s*/i, '').trim() || name
 }
 
 export function convertClaat(src: string): string {
@@ -55,7 +60,7 @@ export function convertClaat(src: string): string {
 
     const h = line.match(/^##\s+(.*)$/)
     if (h) {
-      const name = h[1].trim()
+      const name = stripStepPrefix(h[1].trim())
       step = first ? (INTRO.test(name) ? 0 : 1) : step + 1
       first = false
       body.push(`## Step ${step}: ${name}`)

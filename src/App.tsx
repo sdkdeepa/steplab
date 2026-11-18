@@ -92,7 +92,7 @@ export default function App() {
       {lab && source != null ? (
         <Viewer lab={lab} source={source} onSourceChange={setSource} nav={nav} assets={assets} onAddImages={nav.onAddImages} />
       ) : (
-        <Home onOpen={open} onReadFiles={dropFiles} error={error} hasSaved={!!saved} onResume={() => saved && open(saved)} nav={nav} />
+        <Home onOpen={open} onReadFiles={dropFiles} error={error} nav={nav} />
       )}
       {upload && (
         <UploadDialog

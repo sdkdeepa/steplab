@@ -40,7 +40,7 @@ npm run dev        # open http://localhost:5173
 
 - **Start from a template** opens a lab that demonstrates every feature (`/sample-template`).
 - **Try the sample lab** opens a short real example (`/sample`).
-- **Upload a markdown file** opens a pop-up. Drag in your `.md` file **and its images** together, or browse for them. Labs downloaded from StepLab (`.html`) can be uploaded too, and they reopen for editing with their images.
+- **Upload a markdown file** opens a pop-up with two tabs: **StepLab lab** and **Old CLaaT codelab**. Drag in your `.md` file **and its images** together, or browse for them. Labs downloaded from StepLab (`.html`) can be uploaded too, and they reopen for editing with their images.
 - **Edit** shows the markdown beside the lab with a live preview, and **Save .md** downloads it.
 - **Download HTML** saves one self-contained file, with images packed in.
 
@@ -172,7 +172,10 @@ A downloaded lab is one HTML file, so any static host works (GitHub Pages, Netli
 
 ### Moving from Google CLaaT
 
-Have old CLaaT codelabs? The editor extension converts them: open one and click **Convert**, or run **StepLab: Convert CLaaT Codelab to StepLab**. It saves `name.steplab.md` next to the original, which is never changed.
+Have old CLaaT codelabs? StepLab converts both the `.md` you wrote and the folder `claat export` made (`index.html`, `codelab.json`, `img/`). Your original files are never changed.
+
+- **On the website:** click **Upload a markdown file**, choose the **Old CLaaT codelab** tab, and pick or drag in the exported folder. It opens as a StepLab lab, ready to **Download HTML** or **Save .md**.
+- **In VS Code / Antigravity:** right-click the folder's `index.html` (or a CLaaT `.md`) and choose **Convert CLaaT Codelab to StepLab HTML** for the finished page in one step, or **Convert CLaaT Codelab to StepLab** for an editable `.steplab.md`. StepLab also offers both when you open a CLaaT codelab.
 
 ### Sharing a lab
 
@@ -208,7 +211,8 @@ src/
   lib/sanitize.ts            DOMPurify with an allow-list for embeds
   lib/assets.ts              Images uploaded with a lab
   lib/importFiles.ts         Opens a .md + images, or reopens a downloaded .html
-  lib/claat.ts               Converts Google CLaaT codelabs into StepLab labs
+  lib/claat.ts               Converts CLaaT .md codelabs into StepLab labs
+  lib/claatHtml.ts           Converts exported CLaaT folders (index.html) into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab
   lib/routes.ts              /sample-template and /sample addresses
   components/Home.tsx        Landing page

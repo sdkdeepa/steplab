@@ -42,7 +42,8 @@
     "claat"
   ],
   "activationEvents": [
-    "onLanguage:markdown"
+    "onLanguage:markdown",
+    "onLanguage:html"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -73,6 +74,11 @@
         "command": "steplab.importClaat",
         "title": "Convert CLaaT Codelab to StepLab",
         "category": "StepLab"
+      },
+      {
+        "command": "steplab.exportClaatHtml",
+        "title": "Convert CLaaT Codelab to StepLab HTML",
+        "category": "StepLab"
       }
     ],
     "menus": {
@@ -96,7 +102,12 @@
       "explorer/context": [
         {
           "command": "steplab.importClaat",
-          "when": "resourceExtname == .md",
+          "when": "resourceExtname == .md || resourceExtname == .html",
+          "group": "steplab"
+        },
+        {
+          "command": "steplab.exportClaatHtml",
+          "when": "resourceExtname == .md || resourceExtname == .html",
           "group": "steplab"
         }
       ]

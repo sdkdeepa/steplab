@@ -1,0 +1,274 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Syllabus to Study Planner with AI</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="syllabus-study-planner"
+                  title="Build a Syllabus to Study Planner with AI"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<p>In this codelab you&#39;ll build a real web app <strong>by describing it in plain English</strong>. You won&#39;t write any code.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to turn an idea into a working app with <strong>prompts</strong></li>
+<li>How to <strong>improve</strong> an app one small prompt at a time</li>
+<li>How to <strong>test</strong> AI output instead of trusting it</li>
+<li>What to check before you rely on an AI tool for school or work</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p><strong>Syllabus to Study Planner</strong>: Use a simple prompt in Google AI Studio to build an AI-powered study planner with a sample syllabus already included.</p>
+<p>Your app will:</p>
+<ul>
+<li>Display a table of quizzes, labs, and exams with their due dates</li>
+<li>Show the exact sentence from the syllabus for each date</li>
+<li>Display &#34;⚠️ Check with instructor&#34; when a date is missing instead of guessing</li>
+<li>Calculate a &#34;Start studying&#34; date for each item</li>
+<li>Color-code assignments by type</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll need</h2>
+<ul>
+<li>A laptop with Chrome, Edge, Firefox, or Safari</li>
+<li>A <strong>personal Google account</strong> (Gmail). School or work accounts may have AI Studio turned off.</li>
+</ul>
+<aside class="warning"><p><strong>Don&#39;t paste personal information.</strong> Use the fictional sample syllabus. Your real syllabus is fine at home, but never paste names, grades, or student IDs.</p>
+</aside>
+<h2 is-upgraded>Slides</h2>
+<p>The slides for this workshop are here: <a href="https://boc-sdkdeepa-workshopslides.netlify.app/" target="_blank">Workshop Slides</a></p>
+<h2 is-upgraded>Before the workshop</h2>
+<ol type="1">
+<li>Make sure you can sign in to a <strong>personal Gmail</strong> account.</li>
+<li>Open <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> and sign in. Accept the terms if asked.</li>
+<li>That&#39;s it. No credit card, no downloads, no installs.</li>
+</ol>
+<p>Agree terms <img alt="terms" src="img/f4cc6546e8ba03e.png"></p>
+<p>AI Studio Onboarding Screen <img alt="Dashboard" src="img/d0134c08c25af164.png"></p>
+<p>Welcome Screen <img alt="Welcome Screen" src="img/41135acb7cde4a06.png"></p>
+<p>Click My Apps <img alt="My apps" src="img/cfdd4cf6022b637c.png"></p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 1 · Open AI Studio Dashboard" duration="12">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<ol type="1">
+<li>In AI Studio dashboard, Click <strong>+ New App</strong>, the place where AI Studio creates apps from your description.</li>
+<li>You&#39;ll see a box that says something like <em>&#34;Describe your app&#34;</em>.</li>
+</ol>
+<h2 is-upgraded>Prompt 1: Describe your app</h2>
+<p>Copy this prompt, paste it into the box, and press Enter:</p>
+<pre><code>Build a one-page web app called &#34;Syllabus to Study Planner&#34;. Keep it small and simple.
+
+- A text box pre-filled with a short FICTIONAL &#34;BIO 101&#34; syllabus with 5 dated items
+  (2 quizzes, 1 lab report, 1 midterm, 1 final). Made-up dates, no real names.
+- A &#34;Make my plan&#34; button that uses AI once to list each item in a table:
+  Item, Type, Due date, and &#34;From your syllabus&#34; (the exact sentence it came from).
+- If a date is missing or says TBA, write &#34;⚠️ Check with instructor&#34;. Never guess.
+- A note at the top: &#34;Don&#39;t paste personal info. AI can make mistakes — check every date.&#34;
+
+Keep the code minimal: as few files as possible, no login, no database, no extra features.
+</code></pre>
+<p>Note: <strong>This first prompt takes a while, about 6 to 8 minutes.</strong> AI Studio is writing a whole app: the page, the server, and the files that connect them. You&#39;ll see files appear with green checkmarks. <strong>Don&#39;t refresh, don&#39;t close the tab, and don&#39;t press stop.</strong> It isn&#39;t stuck.</p>
+<p>While you wait:</p>
+<ul>
+<li>Watch the file list. Each ✅ is a file the AI wrote for you.</li>
+<li>Follow along with the instructor&#39;s demo of the finished app.</li>
+<li>Think about it: which of your classes would this help with?</li>
+</ul>
+<p>Note: <strong>Checkpoint:</strong> the right side shows a <strong>Preview</strong> of your app, with the yellow &#34;Don&#39;t paste personal info&#34; banner and the sample BIO 101 syllabus.</p>
+<h2 is-upgraded>Try your app</h2>
+<ol type="1">
+<li>In the <strong>Preview</strong>, click <strong>Make my plan</strong> after each prompt execution.</li>
+<li>A table appears with your quizzes, lab report, midterm, and final.</li>
+</ol>
+<p>Look at the <strong>From your syllabus</strong> column. Every row should quote the sentence it came from.</p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 2 - Test it: don&#39;t just trust it" duration="4">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<p>AI predicts what <em>sounds</em> right, not what <em>is</em> right. So you&#39;ll try to trip it up.</p>
+<ol type="1">
+<li>In the syllabus text box, <strong>delete the date</strong> from one item.</li>
+<li>Change another item&#39;s date to <strong>TBA</strong>.</li>
+<li>Click <strong>Make my plan</strong> again.</li>
+</ol>
+<p><strong>What should happen:</strong> both rows say <strong>⚠️ Check with instructor</strong>, with no made-up dates.</p>
+<p>Now pick <strong>two rows</strong> and compare the &#34;From your syllabus&#34; sentence with the syllabus text. Do they match word for word?</p>
+<p>If the app <strong>invented a date</strong>, paste this into the prompt box:</p>
+<pre><code>When a due date is missing or says TBA, you invented a date. Never guess dates.
+Mark those rows &#34;⚠️ Check with instructor&#34; and leave the date blank.
+</code></pre>
+<p><strong>After every prompt:</strong> Once Google AI Studio finishes generating or updating your app, go to the Preview panel and click &#34;<strong>Make my plan</strong>&#34; to see the updated results. Always test your app after each prompt before moving to the next step.This is the most important step today. Real tools make mistakes like this, and testing is how you catch them before they cost you a missed exam.</p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 3 - Prompt 2: add &#34;Start studying&#34; (fast)" duration="3">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<p>Paste this into the prompt box at the bottom left:</p>
+<pre><code language="language-bash" class="language-bash">Add a column &#34;Start studying&#34; that is 7 days before each exam or quiz,
+and 5 days before each lab report.
+</code></pre>
+<p>Note: <strong>This step should be much faster</strong>, usually well under a minute. AI Studio only changes the files it needs instead of building everything again.</p>
+<p>Click <strong>Make my plan</strong> again and check one row by counting back on a calendar. Is the date right?</p>
+<p><strong>Under the hood:</strong> open the <strong>Code</strong> view (<code>< ></code>). In most versions, the &#34;start studying&#34; dates are worked out by <strong>ordinary code</strong>, not by the AI. The AI reads the syllabus; code does the math. That&#39;s a good habit: let AI handle language and let code handle rules.</p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 4 - Prompt 3: color-code it (fast)" duration="2">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<pre><code>Color-code rows: exams red, quizzes orange, labs blue. 
+Add a small color key above the table.
+</code></pre>
+<p>This one is quick too.</p>
+<p>Your app should look something like these <img alt="Final result" src="img/83b5f0f2567b65cb.png"><img alt="Color coded rows" src="img/8b36d203095baa03.png"></p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Step 5 - Preview your finished app" duration="3">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<p>Your app is done. Now look at it the way a classmate would.</p>
+<ol type="1">
+<li>Click the <strong>full screen</strong> icon in the Preview bar to see the app without the editor.</li>
+<li>Click <strong>Make my plan</strong> one more time and read through your study plan.</li>
+<li>Try it on a phone-sized window: drag your browser narrower and see if it still reads well.</li>
+</ol>
+<p><strong>🎉 You built a working AI app with four prompts and no code.</strong></p>
+<h2 is-upgraded>(OPTIONAL) Step: Finished early? Try one of these</h2>
+<pre><code>Add a &#34;This week&#34; box at the top that shows only what&#39;s due or should be
+started in the next 7 days.
+</code></pre>
+<pre><code>Add a &#34;Copy plan&#34; button that copies the table as plain text.
+</code></pre>
+<pre><code>Add a second tab called &#34;Quiz me&#34;: a text box pre-filled with short FICTIONAL
+BIO 101 notes on photosynthesis, and a button that makes 5 multiple-choice
+questions from the notes, with the answer and the sentence it came from.
+</code></pre>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="2">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<p>Paste this rescue prompt and describe what you see:</p>
+<pre><code>Something isn&#39;t working: [describe what you see]. Please fix it without
+changing anything else.
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>You see</p>
+</td><td colspan="1" rowspan="1"><p>What to do</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>The first build is taking a long time</p>
+</td><td colspan="1" rowspan="1"><p>Normal: 5–7 minutes. Don&#39;t refresh or press stop.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>A red error in the Preview</p>
+</td><td colspan="1" rowspan="1"><p>Use the rescue prompt and paste the error text into it.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>&#34;Make my plan&#34; does nothing</p>
+</td><td colspan="1" rowspan="1"><p>Rescue prompt: &#34;Clicking Make my plan does nothing.&#34;</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>A quota or rate-limit message</p>
+</td><td colspan="1" rowspan="1"><p>You&#39;ve hit the free limit. Wait a minute and try again, or follow the instructor&#39;s demo.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>You can&#39;t open AI Studio</p>
+</td><td colspan="1" rowspan="1"><p>Use a personal Gmail; school and work accounts may block it.</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Next Step - share it</h2>
+<ul>
+<li><strong>Keep working on it:</strong> your app is saved in AI Studio. Come back any time and keep prompting.</li>
+<li><strong>Share it:</strong> the <strong>Publish</strong> button can put your app online with a link. Eligible personal Google accounts can publish up to 2 apps without setting up billing. Google Workspace accounts (many school and work emails) aren&#39;t eligible.</li>
+<li><strong>Download the code:</strong> you can download the project as a ZIP. It&#39;s a real React app with a small server, not a single HTML page, so hosting it somewhere else takes developer setup. The AI part needs your own Gemini API key on the server.</li>
+</ul>
+<h2 is-upgraded>Remember</h2>
+<ol type="1">
+<li><strong>Describe it, then improve it:</strong> one big prompt to start, small prompts after.</li>
+<li><strong>Test before you trust:</strong> missing dates, TBA, and checking the quoted sentence.</li>
+<li><strong>Protect privacy:</strong> fictional or public content only.</li>
+</ol>
+<h2 is-upgraded>Coming up: Workshop 2</h2>
+<p>You&#39;ll build multiple AI agents that <strong>review</strong> work and <strong>propose fixes</strong>, and you&#39;ll decide which changes are allowed.</p>
+<p>See you in the next one!</p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="MORE IDEAS - Build Your Own AI App" duration="5">
+        <p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+<p>You&#39;ve built a <strong>Syllabus to Study Planner</strong>. Want to create something for your own school, work, or creative projects? Choose <strong>one</strong> of these simple ideas, or come up with your own.</p>
+<h2 is-upgraded>Idea 1: Student Planner</h2>
+<pre><code language="language-bash" class="language-bash">Build a simple planner for a college student taking four classes. Show assignments, quizzes, exams, due dates, and a weekly task list. Let me add tasks and mark them complete. Use fictional sample data and a colorful design. Keep it small, with no login or database.
+</code></pre>
+<p>Could look something like this? <img alt="Student Planner" src="img/21f8fec0a47b3fd6.png"></p>
+<h2 is-upgraded>Idea 2: Work Task Manager</h2>
+<pre><code language="language-bash" class="language-bash">Build a simple work task manager with tasks, due dates, priorities, and three statuses: To Do, In Progress, and Done. Let me add tasks and change their status. Use fictional sample data. Keep it small, with no login or database.
+</code></pre>
+<p class="image-container"><img alt="Idea 2" src="img/d35254c0a2bdf92f.png"></p>
+<h2 is-upgraded>Idea 3: Student Creator Dashboard</h2>
+<pre><code language="language-bash" class="language-bash">Build a simple dashboard for an art student balancing college, part-time teaching, and YouTube videos. Show three sections: School, Teaching, and YouTube, each with tasks and deadlines. Let me add tasks and mark them complete. Use fictional sample data. Keep it small, with no login or database.
+</code></pre>
+<h2 is-upgraded>Make it your own</h2>
+<ol type="1">
+<li>Choose <strong>one</strong> idea and paste its prompt into <strong>+ New App</strong> in Google AI Studio.</li>
+<li>Wait for the app to build. Then try adding or completing a task.</li>
+<li>Ask AI Studio for <strong>one small improvement</strong>, such as changing colors or adding a &#34;Due this week&#34; section.</li>
+<li>Test your changes. Does the app do what you asked?</li>
+</ol>
+<p><strong>Free publishing reminder:</strong> Your Study Planner is your first app. As described above, eligible personal Google accounts can <strong>publish up to two apps without setting up billing</strong>. If you want to publish another, choose just one bonus idea. This is a publishing limit, not necessarily a limit on how many projects you can create.</p>
+<h2 is-upgraded>Showcase your app in 60 seconds</h2>
+<p>Be ready to answer:</p>
+<ul>
+<li><strong>What did you build?</strong></li>
+<li><strong>What problem does it solve?</strong></li>
+<li><strong>Can you show one feature working?</strong></li>
+<li><strong>What would you improve next?</strong></li>
+</ul>
+<p>You don&#39;t need a perfect app. A small working project you can explain is a great result. <strong>This challenge is optional and can be completed after the workshop.</strong></p>
+<p><em>Created by </em><a href="https://www.linkedin.com/in/sdkdeepa/" target="_blank"><em>Deepa Subramanian</em></a><em> · © 2026 Deepa Subramanian. All rights reserved.</em></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

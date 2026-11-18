@@ -1,6 +1,6 @@
 import { useState, type DragEvent } from 'react'
+import { filesFromDrop } from '../lib/importFiles'
 import { Logo } from './Logo'
-import { downloadFile } from '../lib/storage'
 import { NavLinks, type NavActions } from './NavLinks'
 import { SiteFooter } from './SiteFooter'
 import { ThemeToggle } from './ThemeToggle'
@@ -33,11 +33,9 @@ interface Props {
   onReadFiles: (files: File[]) => void
   nav: NavActions
   error: string | null
-  hasSaved: boolean
-  onResume: () => void
 }
 
-export function Home({ onOpen, onReadFiles, nav, error, hasSaved, onResume }: Props) {
+export function Home({ onOpen, onReadFiles, nav, error }: Props) {
   const [over, setOver] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
 
@@ -46,10 +44,11 @@ export function Home({ onOpen, onReadFiles, nav, error, hasSaved, onResume }: Pr
     if (files.length) onReadFiles(files)
   }
 
-  const drop = (e: DragEvent) => {
+  const drop = async (e: DragEvent) => {
     e.preventDefault()
     setOver(false)
-    read(Array.from(e.dataTransfer.files))
+    // filesFromDrop also opens dropped folders, such as an exported CLaaT folder
+    read(await filesFromDrop(e.dataTransfer))
   }
 
   const message = fileError || error
@@ -93,7 +92,7 @@ export function Home({ onOpen, onReadFiles, nav, error, hasSaved, onResume }: Pr
           <Illustration />
           <h2 className="on-pointer">Drop your .md file here</h2>
           <h2 className="on-touch">Open your .md file</h2>
-          <p className="drop-sub on-pointer">Drop its images too. You can also reopen a lab you downloaded (.html).</p>
+          <p className="drop-sub on-pointer">Drop its images too. You can also reopen a lab you downloaded (.html), or drop an old CLaaT folder to convert it.</p>
           <p className="drop-sub on-touch">Pick it from Files, Drive or Downloads. Select its images at the same time.</p>
           {message && (
             <p className="drop-error" role="alert">
@@ -107,19 +106,6 @@ export function Home({ onOpen, onReadFiles, nav, error, hasSaved, onResume }: Pr
             <button className="btn btn-ghost" onClick={() => onOpen(sample, 'example-steplab.md')}>
               Try the sample lab
             </button>
-          </div>
-          <div className="drop-links">
-            <button className="link" onClick={() => onOpen(template, 'template.md')}>
-              Open the feature template
-            </button>
-            <button className="link" onClick={() => downloadFile('steplab-template.md', template, 'text/markdown')}>
-              Download template .md
-            </button>
-            {hasSaved && (
-              <button className="link" onClick={onResume}>
-                Continue your last lab
-              </button>
-            )}
           </div>
         </div>
       </section>
