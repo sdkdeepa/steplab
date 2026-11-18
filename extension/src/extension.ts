@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { convertClaat, looksLikeClaat } from '../../src/lib/claat'
+import { convertClaatHtml, isClaatHtml } from '../../src/lib/claatHtml'
 
 /** Same rule as the web app: "## Step 3: Title", "# Step 2 - Title", "### STEP 1. Title", "## Step 4 · Title". */
 const STEP_HEADING = /^#{1,3}\s*step\s*(\d+)\s*[:.)\-–—·•|]?\s*(.*)$/i
@@ -54,7 +55,8 @@ class Preview {
   private doc: vscode.TextDocument
   private disposables: vscode.Disposable[] = []
   private ready = false
-  private exportResolve: ((v: void) => void) | null = null
+  private exportResolve: (() => void) | undefined
+  private readyWaiters: (() => void)[] = []
 
   static show(ctx: vscode.ExtensionContext, doc: vscode.TextDocument) {
     if (Preview.current) {
@@ -136,9 +138,27 @@ class Preview {
     this.panel.webview.postMessage({ type: 'update', text: this.doc.getText(), fileName: this.doc.fileName })
   }
 
-  exportHtml(): Promise<void> {
+  /** Resolves once the preview has loaded and received the current text. */
+  private whenReady(): Promise<void> {
+    return this.ready ? Promise.resolve() : new Promise((r) => this.readyWaiters.push(r))
+  }
+
+  async exportHtml(): Promise<void> {
+    await this.whenReady()
+    if (Preview.current !== this) return
     return new Promise((resolve) => {
-      this.exportResolve = resolve
+      // Never leave the progress spinning: give up after 30 seconds if the preview doesn't answer.
+      const timer = setTimeout(() => {
+        if (this.exportResolve) {
+          this.exportResolve = undefined
+          vscode.window.showErrorMessage('StepLab export timed out. Keep the preview open and try again.')
+          resolve()
+        }
+      }, 30000)
+      this.exportResolve = () => {
+        clearTimeout(timer)
+        resolve()
+      }
       this.panel.webview.postMessage({ type: 'export' })
     })
   }
@@ -147,6 +167,7 @@ class Preview {
     if (m.type === 'ready') {
       this.ready = true
       this.update()
+      this.readyWaiters.splice(0).forEach((r) => r())
     } else if (m.type === 'step' && typeof m.index === 'number') {
       // Clicking a step in the preview scrolls the editor to that heading.
       const steps = scanSteps(this.doc.getText())
@@ -157,6 +178,9 @@ class Preview {
         editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.AtTop)
       }
     } else if (m.type === 'exported' && m.html) {
+      // The HTML is built: stop the "building HTML…" progress before asking where to save.
+      this.exportResolve?.()
+      this.exportResolve = undefined
       const base = this.doc.uri.scheme === 'file' ? path.dirname(this.doc.uri.fsPath) : undefined
       const target = await vscode.window.showSaveDialog({
         defaultUri: base ? vscode.Uri.file(path.join(base, m.suggestedName || 'lab.html')) : undefined,
@@ -165,13 +189,14 @@ class Preview {
       })
       if (target) {
         await vscode.workspace.fs.writeFile(target, Buffer.from(m.html, 'utf8'))
-        const open = await vscode.window.showInformationMessage(`Exported ${path.basename(target.fsPath)}`, 'Open in Browser')
-        if (open) vscode.env.openExternal(target)
+        vscode.window.showInformationMessage(`Exported ${path.basename(target.fsPath)}`, 'Open in Browser').then((open) => {
+          if (open) vscode.env.openExternal(target)
+        })
       }
-      this.exportResolve?.()
     } else if (m.type === 'exportError') {
       vscode.window.showErrorMessage(`StepLab export failed: ${m.message}`)
       this.exportResolve?.()
+      this.exportResolve = undefined
     }
   }
 
@@ -205,6 +230,9 @@ ${docDir ? `<base href="${docDir}/">` : ''}
   }
 
   dispose() {
+    this.exportResolve?.() // closing the preview mid-export ends the progress too
+    this.exportResolve = undefined
+    this.readyWaiters.splice(0).forEach((r) => r())
     Preview.current = undefined
     this.disposables.forEach((d) => d.dispose())
     this.panel.dispose()
@@ -267,6 +295,93 @@ function lint(doc: vscode.TextDocument, diagnostics: vscode.DiagnosticCollection
   diagnostics.set(doc.uri, out)
 }
 
+
+/* ---------- CLaaT → StepLab ---------- */
+/**
+ * Converts a CLaaT codelab (its .md, an exported index.html, or the exported folder)
+ * to name.steplab.md and returns where it was saved. Originals are never changed.
+ * ifExists: 'ask' = Replace or cancel; 'reuse' = Replace or use the existing file.
+ */
+async function convertClaatAt(target: vscode.Uri | undefined, ifExists: 'ask' | 'reuse'): Promise<vscode.Uri | undefined> {
+  let uri = target
+  if (!uri) {
+    const active = vscode.window.activeTextEditor?.document
+    if (active && !active.isUntitled && /\.(md|html?)$/i.test(active.uri.fsPath)) uri = active.uri
+  }
+  if (!uri) {
+    const picked = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      canSelectFolders: true,
+      filters: { 'CLaaT codelab': ['md', 'html'] },
+      title: 'Choose a CLaaT codelab: its .md file, or the exported folder / index.html',
+    })
+    if (!picked?.length) return
+    uri = picked[0]
+  }
+  const stat = await vscode.workspace.fs.stat(uri)
+  if (stat.type & vscode.FileType.Directory) uri = vscode.Uri.joinPath(uri, 'index.html')
+
+  let text: string
+  try {
+    text = Buffer.from(await vscode.workspace.fs.readFile(uri)).toString('utf8')
+  } catch {
+    vscode.window.showErrorMessage(`Couldn't read ${uri.fsPath}.`)
+    return
+  }
+
+  let converted: string
+  let out: vscode.Uri
+  if (/\.html?$/i.test(uri.fsPath)) {
+    if (!isClaatHtml(text)) {
+      vscode.window.showWarningMessage(`${path.basename(uri.fsPath)} isn't an exported CLaaT codelab.`)
+      return
+    }
+    const folder = vscode.Uri.file(path.dirname(uri.fsPath))
+    let json: string | undefined
+    try {
+      json = Buffer.from(await vscode.workspace.fs.readFile(vscode.Uri.joinPath(folder, 'codelab.json'))).toString('utf8')
+    } catch {}
+    converted = convertClaatHtml(text, json)
+    let id = path.basename(folder.fsPath)
+    try {
+      id = JSON.parse(json ?? '{}').id || id
+    } catch {}
+    // Saved inside the exported folder, so its img/ paths keep working.
+    out = vscode.Uri.joinPath(folder, `${id}.steplab.md`)
+  } else {
+    if (!looksLikeClaat(text)) {
+      vscode.window.showWarningMessage(`${path.basename(uri.fsPath)} doesn't look like a CLaaT codelab.`)
+      return
+    }
+    converted = convertClaat(text)
+    out = vscode.Uri.file(uri.fsPath.replace(/\.md$/i, '') + '.steplab.md')
+  }
+
+  let exists = false
+  try {
+    await vscode.workspace.fs.stat(out)
+    exists = true
+  } catch {}
+  if (exists) {
+    const name = path.basename(out.fsPath)
+    if (ifExists === 'reuse') {
+      const pick = await vscode.window.showWarningMessage(
+        `${name} already exists (you may have edited it). Use it as it is, or convert again from CLaaT?`,
+        { modal: true },
+        'Use existing',
+        'Convert again',
+      )
+      if (!pick) return
+      if (pick === 'Use existing') return out
+    } else {
+      const ok = await vscode.window.showWarningMessage(`${name} already exists. Replace it?`, { modal: true }, 'Replace')
+      if (ok !== 'Replace') return
+    }
+  }
+  await vscode.workspace.fs.writeFile(out, Buffer.from(converted, 'utf8'))
+  return out
+}
+
 /* ---------- step outline (Ctrl/Cmd+Shift+O and the Outline view) ---------- */
 class StepSymbols implements vscode.DocumentSymbolProvider {
   provideDocumentSymbols(doc: vscode.TextDocument) {
@@ -301,8 +416,6 @@ export function activate(ctx: vscode.ExtensionContext) {
       const doc = activeLab()
       if (!doc && !Preview.current) return vscode.window.showInformationMessage('Open a markdown (.md) lab file first.')
       const p = doc ? Preview.show(ctx, doc) : Preview.current!
-      // give a freshly opened panel a moment to load
-      await new Promise((r) => setTimeout(r, 400))
       await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'StepLab: building HTML…' }, () => p.exportHtml())
     }),
 
@@ -324,36 +437,24 @@ export function activate(ctx: vscode.ExtensionContext) {
     }),
 
     vscode.commands.registerCommand('steplab.importClaat', async (target?: vscode.Uri) => {
-      let doc: vscode.TextDocument | undefined
-      if (target) doc = await vscode.workspace.openTextDocument(target)
-      else if (vscode.window.activeTextEditor?.document.languageId === 'markdown') doc = vscode.window.activeTextEditor.document
-      if (!doc) {
-        const picked = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { Markdown: ['md'] }, title: 'Choose a CLaaT codelab (.md)' })
-        if (!picked?.length) return
-        doc = await vscode.workspace.openTextDocument(picked[0])
-      }
-      const converted = convertClaat(doc.getText())
-      let out: vscode.TextDocument
-      if (doc.isUntitled) {
-        out = await vscode.workspace.openTextDocument({ language: 'markdown', content: converted })
-      } else {
-        // Write next to the original, which is never changed: my-lab.md → my-lab.steplab.md
-        const target = vscode.Uri.file(doc.uri.fsPath.replace(/\.md$/i, '') + '.steplab.md')
-        let exists = false
-        try {
-          await vscode.workspace.fs.stat(target)
-          exists = true
-        } catch {}
-        if (exists) {
-          const ok = await vscode.window.showWarningMessage(`${path.basename(target.fsPath)} already exists. Replace it?`, { modal: true }, 'Replace')
-          if (ok !== 'Replace') return
-        }
-        await vscode.workspace.fs.writeFile(target, Buffer.from(converted, 'utf8'))
-        out = await vscode.workspace.openTextDocument(target)
-      }
-      await vscode.window.showTextDocument(out)
-      Preview.show(ctx, out)
-      vscode.window.showInformationMessage('Converted to StepLab. Check the steps in the preview.')
+      const out = await convertClaatAt(target, 'ask')
+      if (!out) return
+      const doc = await vscode.workspace.openTextDocument(out)
+      await vscode.window.showTextDocument(doc)
+      Preview.show(ctx, doc)
+      vscode.window.showInformationMessage(`Converted to StepLab: ${path.basename(out.fsPath)}. Your original files are unchanged.`)
+    }),
+
+    // One step: CLaaT codelab → StepLab page (.html). The .steplab.md is kept next to it for later edits.
+    vscode.commands.registerCommand('steplab.exportClaatHtml', async (target?: vscode.Uri) => {
+      const out = await convertClaatAt(target, 'reuse')
+      if (!out) return
+      const doc = await vscode.workspace.openTextDocument(out)
+      const preview = Preview.show(ctx, doc)
+      await vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: 'StepLab: converting and building HTML…' },
+        () => preview.exportHtml(),
+      )
     }),
 
     vscode.languages.registerDocumentSymbolProvider({ language: 'markdown' }, new StepSymbols()),
@@ -373,15 +474,19 @@ export function activate(ctx: vscode.ExtensionContext) {
 // Offer the conversion once per file per session when a CLaaT codelab is opened.
 const offered = new Set<string>()
 async function offerClaatImport(doc: vscode.TextDocument) {
-  if (doc.languageId !== 'markdown' || doc.uri.scheme !== 'file' || offered.has(doc.uri.toString())) return
-  if (!looksLikeClaat(doc.getText())) return
+  if (doc.uri.scheme !== 'file' || offered.has(doc.uri.toString())) return
+  const isMd = doc.languageId === 'markdown' && looksLikeClaat(doc.getText())
+  const isHtml = doc.languageId === 'html' && isClaatHtml(doc.getText())
+  if (!isMd && !isHtml) return
   offered.add(doc.uri.toString())
   const choice = await vscode.window.showInformationMessage(
     `${path.basename(doc.uri.fsPath)} looks like a CLaaT codelab. Convert it to StepLab? (Your original stays as it is.)`,
-    'Convert',
+    'StepLab HTML',
+    'Editable .md',
     'Not now',
   )
-  if (choice === 'Convert') vscode.commands.executeCommand('steplab.importClaat', doc.uri)
+  if (choice === 'StepLab HTML') vscode.commands.executeCommand('steplab.exportClaatHtml', doc.uri)
+  else if (choice === 'Editable .md') vscode.commands.executeCommand('steplab.importClaat', doc.uri)
 }
 
 export function deactivate() {}

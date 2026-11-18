@@ -10,4 +10,4 @@ export const CREATOR = {
 export const hasCreatorLink = !CREATOR.linkedin.includes('REPLACE-WITH')
 
 /** Where "Made with StepLab" in downloaded labs points to. */
-export const STEPLAB_URL = 'https://deepasubramanian.dev/steplab/'
+export const STEPLAB_URL = 'https://sdkdeepa.github.io/steplab/'

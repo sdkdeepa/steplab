@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-11-15T16:08:10-08:00",
+  "id": "syllabus-study-planner",
+  "duration": 33,
+  "title": "Build a Syllabus to Study Planner with AI",
+  "summary": "Build an AI study planner from a syllabus in Google AI Studio using plain English. No coding, no credit card.",
+  "source": "syllabus-study-planner.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "ai",
+    "beginner",
+    "no-code"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "syllabus-study-planner"
+}
