@@ -3,6 +3,8 @@ import { filesFromDrop } from '../lib/importFiles'
 import { Logo } from './Logo'
 import { NavLinks, type NavActions } from './NavLinks'
 import { SiteFooter } from './SiteFooter'
+import { VSCODE_URL, OPENVSX_URL } from '../config'
+import './HomeExtras.css'
 import { ThemeToggle } from './ThemeToggle'
 import sample from '../labs/example-steplab.md?raw'
 import template from '../labs/template.md?raw'
@@ -126,6 +128,50 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
             <p>Download a single HTML file and host it on GitHub Pages, or send it to attendees directly.</p>
           </article>
         </div>
+      </section>
+
+      <section className="extras" id="editor">
+        <h2>Write labs in your editor</h2>
+        <p className="extras-sub">
+          The StepLab extension shows a live preview beside your markdown and exports the finished lab as one HTML file.
+        </p>
+        <div className="install-grid">
+          <a className="install-card" href={VSCODE_URL} target="_blank" rel="noopener noreferrer">
+            <img src="icons/vscode.png" alt="" width="48" height="48" />
+            <span>
+              <small>Install for</small>
+              <b>VS Code</b>
+              <small>Visual Studio Marketplace</small>
+            </span>
+          </a>
+          <a className="install-card" href={OPENVSX_URL} target="_blank" rel="noopener noreferrer">
+            <img src="icons/antigravity.png" alt="" width="48" height="48" />
+            <span>
+              <small>Install for</small>
+              <b>Antigravity IDE</b>
+              <small>Open VSX Registry</small>
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <section className="extras" id="mobile">
+        <h2>Built for mobile codelabs too</h2>
+        <p className="extras-sub">
+          Teaching Android or iOS? Code blocks are highlighted for the languages mobile workshops use.
+        </p>
+        <ul className="lang-chips" aria-label="Highlighted mobile languages">
+          <li><b>kotlin</b> Jetpack Compose</li>
+          <li><b>swift</b> SwiftUI</li>
+          <li><b>objectivec</b></li>
+          <li><b>dart</b> Flutter</li>
+          <li><b>java</b></li>
+          <li><b>gradle</b></li>
+          <li><b>xml</b></li>
+        </ul>
+        <p className="extras-sub">
+          Write <code>```kotlin</code>, <code>```swift</code> and so on above a code block.
+        </p>
       </section>
 
       <section className="format" id="format">
