@@ -5,6 +5,8 @@ import { applyAssets, type Assets } from '../lib/assets'
 import { wireDecks } from '../lib/deck'
 import { linkedinText, slugify } from '../lib/parser'
 import { exportLabHtml } from '../lib/exportHtml'
+import { SANDBOX_LABEL, SANDBOX_TITLE } from '../lib/sandbox'
+import '../sandbox.css'
 import { downloadFile } from '../lib/storage'
 import { Congrats } from './Congrats'
 import { Logo } from './Logo'
@@ -202,6 +204,18 @@ export function Viewer({ lab, source, onSourceChange, nav, assets = {}, onAddIma
               {step?.label} of {steps[count - 1]?.badge}
               {minutesLeft > 0 && ` · ${minutesLeft} min left`}
             </p>
+          )}
+          {lab.sandbox && (
+            <div className="sandbox-row">
+              <a className="sandbox-btn" href={lab.sandbox.url} target="_blank" rel="noopener noreferrer" title={SANDBOX_TITLE}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="16" rx="3" />
+                  <path d="m7 10 3 2-3 2M12 15h5" />
+                </svg>
+                {SANDBOX_LABEL}
+                <small>Codespaces</small>
+              </a>
+            </div>
           )}
         </div>
         <nav className="rail" aria-label="Steps">

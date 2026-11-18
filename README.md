@@ -134,6 +134,28 @@ copyright_position: both                           # top, bottom or both
 ---
 ~~~
 
+### Sandbox (GitHub Codespaces)
+
+Give attendees a ready-to-use coding environment in their browser, with nothing to install. Add one line to the front matter:
+
+~~~yaml
+---
+sandbox: your-name/your-sandbox-repo   # a GitHub repo with a .devcontainer folder
+---
+~~~
+
+StepLab then shows a **Launch sandbox** button under the lab title, in the website, the downloaded HTML and the editor preview. It opens the repo in GitHub Codespaces, on the attendee's own free monthly hours.
+
+To make the sandbox repo:
+
+1. Create a public GitHub repo with the starter files for your lab.
+2. Add `.devcontainer/devcontainer.json` with the tools the lab needs (for example a Node.js or Python image). On GitHub: **Code → Codespaces → ⋯ → Configure dev container**.
+3. Test it: open `https://codespaces.new/your-name/your-sandbox-repo?quickstart=1` in a private window and follow your lab.
+
+Example: [sdkdeepa/steplab-sandbox-node-api](https://github.com/sdkdeepa/steplab-sandbox-node-api), a 25-minute Node.js API lab with a `npm run check` script that checks each step. It's also the lab behind **Try a sandbox lab** on the home page.
+
+> Tip: Add a last step that reminds attendees to stop their codespace at [github.com/codespaces](https://github.com/codespaces) so it stops using their free hours.
+
 See [`public/labs/template.md`](public/labs/template.md) for every feature, and [`public/labs/example-steplab.md`](public/labs/example-steplab.md) for a short real lab.
 
 > Embedded videos and slides need an internet connection, and they play best when the lab is served from a website. Opened straight from your disk, some browsers block YouTube embeds.
@@ -203,7 +225,7 @@ Install the `.vsix` with Extensions → `…` → **Install from VSIX**. To publ
 ```
 src/
   config.ts                  Your name, LinkedIn and StepLab URL (edit when forking)
-  labs/                      Built-in template and example lab
+  labs/                      Built-in template, example lab and the sandbox demo lab
   lib/parser.ts              Step parsing (the core, framework-free and tested)
   lib/markdown.ts            Markdown → HTML (callouts, code, YouTube cards)
   lib/embeds.ts              YouTube, Google Slides, PowerPoint and image-deck markup
@@ -214,11 +236,13 @@ src/
   lib/claat.ts               Converts CLaaT .md codelabs into StepLab labs
   lib/claatHtml.ts           Converts exported CLaaT folders (index.html) into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab
+  lib/sandbox.ts             Reads `sandbox:` and builds the Launch sandbox button
   lib/routes.ts              /sample-template and /sample addresses
   components/Home.tsx        Landing page
   components/UploadDialog.tsx  Upload pop-up with drag and drop
   components/Viewer.tsx      Lab player: timeline, pager, live editor, download
   components/Congrats.tsx    Finish pop-up with confetti
+  sandbox.css                Launch sandbox button styles (website and editor preview)
 public/labs/                 Labs served as files (for ?lab= links)
 extension/                   VS Code / Antigravity extension
 ```

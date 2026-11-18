@@ -1,4 +1,5 @@
 import { renderMarkdown } from './markdown'
+import { readSandbox, type Sandbox } from './sandbox'
 
 export interface Step {
   /** The number written in the heading ("Step 3" -> 3). Sections before Step 1 get 0. */
@@ -27,6 +28,8 @@ export interface Lab {
   copyright: Copyright | null
   author?: string
   summary?: string
+  /** From `sandbox:` in front matter: a GitHub repo to open in Codespaces. */
+  sandbox: Sandbox | null
   steps: Step[]
   warnings: string[]
   totalMinutes: number
@@ -145,6 +148,7 @@ export function parseLab(source: string, render: (md: string) => string = render
     copyright: readCopyright(meta),
     author: meta.author,
     summary: meta.summary || meta.description,
+    sandbox: readSandbox(meta.sandbox),
     steps,
     warnings,
     totalMinutes: steps.reduce((a, s) => a + s.duration, 0),

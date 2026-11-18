@@ -8,6 +8,7 @@ import './HomeExtras.css'
 import { ThemeToggle } from './ThemeToggle'
 import sample from '../labs/example-steplab.md?raw'
 import template from '../labs/template.md?raw'
+import sandboxLab from '../labs/node-api.steplab.md?raw'
 
 const FORMAT = `## Step 1: Set up your environment
 Duration: 5
@@ -174,6 +175,17 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
         </p>
       </section>
 
+      <section className="extras" id="sandbox">
+        <h2>Labs with a live sandbox</h2>
+        <p className="extras-sub">
+          Add one line to your lab, <code>sandbox: your-name/your-repo</code>, and attendees get a ready-to-use coding
+          environment in the browser through GitHub Codespaces. Nothing to install.
+        </p>
+        <button type="button" className="btn btn-red" onClick={() => onOpen(sandboxLab, 'node-api.steplab.md')}>
+          Try a sandbox lab
+        </button>
+      </section>
+
       <section className="format" id="format">
         <div>
           <h2>The format</h2>
@@ -204,6 +216,10 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
             <li>
               Add <code>author:</code>, <code>linkedin:</code> and <code>copyright:</code> to show a copyright line on every
               step, or <code>copyright: none</code> to hide it.
+            </li>
+            <li>
+              Add <code>sandbox:</code> with a GitHub repo to show a “Launch sandbox” button that opens it in GitHub
+              Codespaces.
             </li>
             <li>A “Congratulations” pop-up appears when someone finishes the last step.</li>
             <li>
