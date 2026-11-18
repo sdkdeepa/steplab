@@ -4,6 +4,7 @@ author: Your Name                                    # you: shown as the author 
 linkedin: https://www.linkedin.com/in/your-profile   # optional: a LinkedIn link next to the copyright
 copyright: © {year} {author}. All rights reserved.   # optional: write "none" to hide the copyright line
 copyright_position: both                             # top, bottom or both
+# sandbox: your-name/your-sandbox-repo             # optional: remove the # to add a "Launch sandbox" button (GitHub Codespaces)
 ---
 
 # StepLab: workshops, step by step

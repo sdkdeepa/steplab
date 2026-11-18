@@ -11,6 +11,7 @@ Write a step-by-step codelab in **one markdown file** and see it as an interacti
 - **Insert Next Step** (`Ctrl+Alt+S` / `Cmd+Alt+S`) adds `## Step N:` with the right number.
 - **Snippets:** `steplab` (new lab), `step0`, `step`, `slides`, `youtube`, `note`, `tip`, `warning`. In markdown files, type the name and press `Ctrl+Space` to see them (markdown hides suggestions by default).
 - **Bring your CLaaT codelabs.** Works with a CLaaT `.md` or an exported CLaaT folder (`index.html` + `img/`). **StepLab: Convert CLaaT Codelab to StepLab HTML** gives you the finished StepLab page in one step; **StepLab: Convert CLaaT Codelab to StepLab** gives you an editable `.steplab.md`. Both are on the right-click menu of `.md` and `.html` files, and StepLab offers them when you open a CLaaT codelab. Your original files are never changed.
+- **Launch sandbox button.** Add `sandbox: your-name/your-repo` to the front matter and the lab gets a button that opens that GitHub repo in Codespaces, a ready-to-use coding environment in the browser. It also appears in exported HTML.
 - **Warnings** for out-of-order step numbers and image paths that don't exist.
 - **Step outline** in the Outline view and Go to Symbol (`Ctrl+Shift+O` / `Cmd+Shift+O`).
 

@@ -2,6 +2,7 @@ import type { Copyright, Lab } from './parser'
 import { linkedinText } from './parser'
 import { wireDecks } from './deck'
 import { STEPLAB_URL } from '../config'
+import { sandboxButtonHtml } from './sandbox'
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -83,7 +84,7 @@ ${bottom}</section>`,
 <style>${EXPORT_CSS}</style>
 </head>
 <body>
-<header class="top"><a class="brand" href="${esc(STEPLAB_URL)}" target="_blank" rel="noopener noreferrer" aria-label="StepLab"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="20" width="10" height="9" rx="2" fill="currentColor" opacity=".35"/><rect x="11" y="12" width="10" height="17" rx="2" fill="currentColor" opacity=".65"/><rect x="19" y="3" width="10" height="26" rx="2" fill="#e8251a"/></svg><span>StepLab</span></a><h1>${esc(lab.title)}</h1><span id="left"></span><button id="theme" type="button" aria-label="Switch theme"></button></header>
+<header class="top"><a class="brand" href="${esc(STEPLAB_URL)}" target="_blank" rel="noopener noreferrer" aria-label="StepLab"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="20" width="10" height="9" rx="2" fill="currentColor" opacity=".35"/><rect x="11" y="12" width="10" height="17" rx="2" fill="currentColor" opacity=".65"/><rect x="19" y="3" width="10" height="26" rx="2" fill="#e8251a"/></svg><span>StepLab</span></a><h1>${esc(lab.title)}</h1><span id="left"></span>${sandboxButtonHtml(lab.sandbox)}<button id="theme" type="button" aria-label="Switch theme"></button></header>
 <div class="meter"><i id="bar"></i></div>
 <div class="wrap">
 <nav class="rail"><ol id="rail"></ol></nav>
@@ -112,6 +113,7 @@ const EXPORT_CSS = `
 h1,h2{font-family:"Inter Tight",Inter,sans-serif;line-height:1.1;text-wrap:balance}
 .top{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px max(4vw,16px);background:light-dark(#fff,#0b0d0f);color:light-dark(#0b0d0f,#fff);border-bottom:1px solid var(--line)}
 .brand{display:inline-flex;align-items:center;gap:8px;font:800 19px "Inter Tight",Inter,sans-serif;color:inherit;text-decoration:none;letter-spacing:-.01em;flex:none}.brand .logo{width:26px;height:26px}.top h1{font-size:18px;margin:0;flex:1 1 200px}#left{font-size:14px;opacity:.75}
+.sandbox-btn{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 14px;border-radius:999px;border:2px solid var(--red);color:inherit;font-weight:600;font-size:14px;text-decoration:none;white-space:nowrap;flex:none;transition:background .15s,color .15s}.sandbox-btn:hover{background:var(--red);color:#fff}.sandbox-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.sandbox-btn small{font-weight:500;font-size:12px;opacity:.7}@media(max-width:600px){.sandbox-btn{min-height:42px;margin-top:6px}}
 .meter{height:4px;background:var(--line)}.meter i{display:block;height:100%;width:0;background:var(--red);transition:width .3s}
 .wrap{display:grid;grid-template-columns:minmax(0,270px) minmax(0,1fr);gap:32px;max-width:1200px;margin:0 auto;padding:32px max(4vw,16px) 120px}@media(min-width:1100px){.wrap{grid-template-columns:240px minmax(0,1fr);gap:28px;max-width:1480px;padding-left:24px;padding-right:24px}.top{padding-left:max(24px,calc((100vw - 1480px)/2 + 24px));padding-right:max(24px,calc((100vw - 1480px)/2 + 24px))}}
 .rail ol{list-style:none;margin:0;padding:0;position:sticky;top:20px}.rail button{display:flex;gap:12px;width:100%;text-align:left;padding:10px;border:0;border-radius:10px;background:none;color:var(--ink);font:500 15px Inter;cursor:pointer}

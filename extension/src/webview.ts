@@ -7,7 +7,9 @@ import { parseLab, slugify, linkedinText, type Lab, type Copyright } from '../..
 import { sanitize } from '../../src/lib/sanitize'
 import { wireDecks } from '../../src/lib/deck'
 import { exportLabHtml } from '../../src/lib/exportHtml'
+import { sandboxButtonHtml } from '../../src/lib/sandbox'
 import '../../src/styles.css'
+import '../../src/sandbox.css'
 import './webview.css'
 
 declare function acquireVsCodeApi(): {
@@ -65,6 +67,7 @@ function render(keepScroll = false) {
     <div class="lab-head">
       <h1>${esc(lab.title)}</h1>
       <p>${esc(s.label)} of ${esc(steps[steps.length - 1].badge)}${left ? ` · ${left} min left` : ''}</p>
+      ${lab.sandbox ? `<div class="sandbox-row">${sandboxButtonHtml(lab.sandbox, false)}</div>` : ''}
     </div>
     <nav class="rail" aria-label="Steps"><ol>${steps
       .map(
@@ -181,3 +184,4 @@ window.addEventListener('message', async (event: MessageEvent<FromHost>) => {
 })
 
 vscode.postMessage({ type: 'ready' })
+

@@ -42,4 +42,5 @@ body {
   .rail button { padding: 4px; min-width: 40px; justify-content: center }
   .rail li.on button { box-shadow: none; background: transparent }
   .lab-head { text-align: left }
+  .sandbox-row { justify-content: flex-start }
 }

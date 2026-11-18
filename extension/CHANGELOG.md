@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.4
+- New: **Launch sandbox button.** Add `sandbox: your-name/your-repo` to a lab's front matter and StepLab shows a "Launch sandbox" button under the title, in the preview and in exported HTML. It opens that GitHub repo in Codespaces, so attendees get a ready-to-use coding environment in the browser with nothing to install. The template shows the line, commented out.
+
 ## 0.1.3
 - New: **Convert CLaaT Codelab to StepLab.** Works with both kinds of CLaaT codelab: the `.md` you wrote, or the folder `claat export` made (`index.html`, `codelab.json`, `img/`). The result is saved as `name.steplab.md` (inside the exported folder, so images keep working); your originals are never changed. Run it from the Command Palette or right-click a `.md` or `.html` file. StepLab also offers to convert when you open a CLaaT codelab. **One step to a StepLab page:** run **StepLab: Convert CLaaT Codelab to StepLab HTML** (or choose "StepLab HTML" when StepLab offers) to convert and export in one go. Steps you numbered by hand ("Step 1 · …") are renumbered cleanly, with Overview as Step 0.
 - Fixed: the "building HTML…" message could keep spinning when exporting right after opening the preview.
