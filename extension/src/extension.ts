@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import { convertClaat, looksLikeClaat } from '../../src/lib/claat'
 
 /** Same rule as the web app: "## Step 3: Title", "# Step 2 - Title", "### STEP 1. Title", "## Step 4 · Title". */
 const STEP_HEADING = /^#{1,3}\s*step\s*(\d+)\s*[:.)\-–—·•|]?\s*(.*)$/i
@@ -322,12 +323,65 @@ export function activate(ctx: vscode.ExtensionContext) {
       await ed.insertSnippet(new vscode.SnippetString(`## Step ${next}: \${1:Title}\nDuration: \${2:5}\n\n$0\n`))
     }),
 
+    vscode.commands.registerCommand('steplab.importClaat', async (target?: vscode.Uri) => {
+      let doc: vscode.TextDocument | undefined
+      if (target) doc = await vscode.workspace.openTextDocument(target)
+      else if (vscode.window.activeTextEditor?.document.languageId === 'markdown') doc = vscode.window.activeTextEditor.document
+      if (!doc) {
+        const picked = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { Markdown: ['md'] }, title: 'Choose a CLaaT codelab (.md)' })
+        if (!picked?.length) return
+        doc = await vscode.workspace.openTextDocument(picked[0])
+      }
+      const converted = convertClaat(doc.getText())
+      let out: vscode.TextDocument
+      if (doc.isUntitled) {
+        out = await vscode.workspace.openTextDocument({ language: 'markdown', content: converted })
+      } else {
+        // Write next to the original, which is never changed: my-lab.md → my-lab.steplab.md
+        const target = vscode.Uri.file(doc.uri.fsPath.replace(/\.md$/i, '') + '.steplab.md')
+        let exists = false
+        try {
+          await vscode.workspace.fs.stat(target)
+          exists = true
+        } catch {}
+        if (exists) {
+          const ok = await vscode.window.showWarningMessage(`${path.basename(target.fsPath)} already exists. Replace it?`, { modal: true }, 'Replace')
+          if (ok !== 'Replace') return
+        }
+        await vscode.workspace.fs.writeFile(target, Buffer.from(converted, 'utf8'))
+        out = await vscode.workspace.openTextDocument(target)
+      }
+      await vscode.window.showTextDocument(out)
+      Preview.show(ctx, out)
+      vscode.window.showInformationMessage('Converted to StepLab. Check the steps in the preview.')
+    }),
+
     vscode.languages.registerDocumentSymbolProvider({ language: 'markdown' }, new StepSymbols()),
-    vscode.workspace.onDidOpenTextDocument((d) => lint(d, diagnostics)),
+    vscode.workspace.onDidOpenTextDocument((d) => {
+      lint(d, diagnostics)
+      offerClaatImport(d)
+    }),
     vscode.workspace.onDidChangeTextDocument((e) => lint(e.document, diagnostics)),
     vscode.workspace.onDidCloseTextDocument((d) => diagnostics.delete(d.uri)),
   )
-  vscode.workspace.textDocuments.forEach((d) => lint(d, diagnostics))
+  vscode.workspace.textDocuments.forEach((d) => {
+    lint(d, diagnostics)
+    offerClaatImport(d)
+  })
+}
+
+// Offer the conversion once per file per session when a CLaaT codelab is opened.
+const offered = new Set<string>()
+async function offerClaatImport(doc: vscode.TextDocument) {
+  if (doc.languageId !== 'markdown' || doc.uri.scheme !== 'file' || offered.has(doc.uri.toString())) return
+  if (!looksLikeClaat(doc.getText())) return
+  offered.add(doc.uri.toString())
+  const choice = await vscode.window.showInformationMessage(
+    `${path.basename(doc.uri.fsPath)} looks like a CLaaT codelab. Convert it to StepLab? (Your original stays as it is.)`,
+    'Convert',
+    'Not now',
+  )
+  if (choice === 'Convert') vscode.commands.executeCommand('steplab.importClaat', doc.uri)
 }
 
 export function deactivate() {}

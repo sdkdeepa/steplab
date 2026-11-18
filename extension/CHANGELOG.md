@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+- New: **Convert CLaaT Codelab to StepLab.** Turns a Google CLaaT markdown codelab into a StepLab lab, saved as `name.steplab.md` next to the original (which is never changed). Run it from the Command Palette or right-click a `.md` file. StepLab also offers to convert when you open a CLaaT codelab.
+- Exported HTML labs use more of wide screens: on desktops 1100px and wider, the step list sits further left and code blocks, images and slides get more room.
+
 ## 0.1.2
 - Published under the `sdkdeepa` publisher (was `deepasubramanian`). The extension ID is now `sdkdeepa.steplab`.
 - New name: StepLab: Codelabs from Markdown.

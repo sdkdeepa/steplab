@@ -162,6 +162,18 @@ The first line adds the trailing slash StepLab needs to find its files. The seco
 - Step 1 has a clean address. Later steps add `#step-2`, `#step-3`, and so on.
 - `netlify.toml` includes the rule that makes these addresses work when opened or refreshed. On other hosts, add an equivalent "serve `index.html` for unknown paths" rule.
 
+### Hosting a downloaded lab
+
+A downloaded lab is one HTML file, so any static host works (GitHub Pages, Netlify, your own site).
+
+- **Rename it to `index.html` on your computer before uploading.** Then the site's main address opens the lab. Don't rename it with GitHub's ✏️ web editor: it can't load large files and saves them empty.
+- **On GitHub Pages:** upload `index.html` to a public repo, then **Settings → Pages → Deploy from a branch → `main` / root**.
+- **Keep images small.** Images are packed into the file, so resize big screenshots (about 1600px wide, or JPG/WebP) to keep the lab fast on phones.
+
+### Moving from Google CLaaT
+
+Have old CLaaT codelabs? The editor extension converts them: open one and click **Convert**, or run **StepLab: Convert CLaaT Codelab to StepLab**. It saves `name.steplab.md` next to the original, which is never changed.
+
 ### Sharing a lab
 
 Put `.md` files in `public/labs/` and share links like:
@@ -196,6 +208,7 @@ src/
   lib/sanitize.ts            DOMPurify with an allow-list for embeds
   lib/assets.ts              Images uploaded with a lab
   lib/importFiles.ts         Opens a .md + images, or reopens a downloaded .html
+  lib/claat.ts               Converts Google CLaaT codelabs into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab
   lib/routes.ts              /sample-template and /sample addresses
   components/Home.tsx        Landing page
