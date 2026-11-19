@@ -32,20 +32,24 @@ jobs:
   extension:
     name: Extension
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: extension
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: extension/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            extension/package-lock.json
+      # The extension reuses the website's code in src/, so it needs the root packages too.
       - run: npm ci
+      - run: npm ci
+        working-directory: extension
       - run: npm run build
+        working-directory: extension
       # Makes sure the extension still packages into a .vsix (it isn't published from here).
       - run: npx vsce package --no-dependencies --out steplab-check.vsix
+        working-directory: extension
 
   docker:
     name: Docker image
