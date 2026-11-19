@@ -216,6 +216,22 @@ You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Mac 
 
 > Tip: Before you start, open Docker Desktop and install any update it offers (**Check for updates** in its menu), then restart it. An outdated Docker Desktop makes the build fail. If you see "Cannot connect to the Docker daemon," Docker Desktop isn't running yet: open it and wait until it says it's running.
 
+### Quickest: use the published image
+
+No build needed. The same on every system:
+
+```
+docker run --rm -p 8080:8080 ghcr.io/sdkdeepa/steplab
+```
+
+Docker downloads StepLab the first time, then it opens at [localhost:8080](http://localhost:8080). It works on Intel and Apple Silicon Macs, Windows and Linux. To add your own labs, use the commands in step 3 below and replace `steplab` at the end with `ghcr.io/sdkdeepa/steplab`. To get a newer version later, run `docker pull ghcr.io/sdkdeepa/steplab`.
+
+Prefer a fixed version? Use a version tag, for example `ghcr.io/sdkdeepa/steplab:0.1.4`.
+
+### Or build it yourself
+
+Use this if you changed StepLab's code, or forked it.
+
 ### 1. Build the image
 
 The same on every system:
@@ -279,6 +295,7 @@ Edit the lab, save, click `Done` and then refresh the page. The change shows wit
 - **Windows:** keep Docker Desktop on **Linux containers** (the default). StepLab's image is a Linux image.
 - **Another port:** change the first number, for example `-p 3000:8080`, then open `localhost:3000`.
 - **Labs with a sandbox** keep their **Launch sandbox** button. The sandbox itself still runs in GitHub Codespaces.
+- **Forks** publish their own image: push a version tag (for example `git tag v1.0.0 && git push origin v1.0.0`) and `.github/workflows/docker.yml` builds `ghcr.io/your-name/steplab`. Then make the package public under **your profile → Packages → steplab → Package settings**.
 
 ## VS Code and Antigravity extension
 
@@ -318,6 +335,10 @@ src/
 public/labs/                 Labs served as files (for ?lab= links)
 Dockerfile                   Docker image: builds StepLab, then serves it with nginx
 docker/nginx.conf            nginx settings for the Docker image
+.github/workflows/deploy.yml Deploys the website to GitHub Pages on every push to main
+.github/workflows/ci.yml     Checks every pull request: tests, website, extension, Docker
+.github/workflows/docker.yml Publishes the Docker image to ghcr.io when a version tag is pushed
+.github/CODEOWNERS           Every change needs the maintainer's review
 extension/                   VS Code / Antigravity extension
 ```
 
@@ -336,7 +357,7 @@ StepLab works for Android and iOS codelabs. Code blocks highlight `kotlin` (Jetp
 
 ## Contributing
 
-PRs are welcome, especially new labs in `public/labs/`. Run `npm test` and check the lab at phone width before opening a PR.
+PRs are welcome, especially new labs in `public/labs/`. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first: every change goes through a pull request and needs the maintainer's approval. To report a security problem, see [SECURITY.md](SECURITY.md).
 
 ## License
 
