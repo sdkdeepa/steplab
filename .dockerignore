@@ -1,0 +1,14 @@
+# Keep the Docker build small and free of local or private files.
+node_modules
+dist
+.git
+.github
+extension
+*.vsix
+*.log
+.DS_Store
+.env
+.env.*
+deepa-the-author.md
+my-labs
+*.tsbuildinfo

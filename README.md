@@ -208,6 +208,78 @@ https://yourdomain.com/steplab/?lab=labs/my-workshop.md
 https://yourdomain.com/steplab/?lab=labs/my-workshop.md#step-3
 ```
 
+## Run it with Docker
+
+Run StepLab on your own computer or server, for example behind a company firewall or at a workshop with poor Wi-Fi. The image is the built website served by nginx on port 8080. No database, no backend.
+
+You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Mac or Windows) or Docker Engine (Linux). Open a terminal in the `steplab` folder.
+
+> Tip: Before you start, open Docker Desktop and install any update it offers (**Check for updates** in its menu), then restart it. An outdated Docker Desktop makes the build fail. If you see "Cannot connect to the Docker daemon," Docker Desktop isn't running yet: open it and wait until it says it's running.
+
+### 1. Build the image
+
+The same on every system:
+
+```
+docker buildx build -t steplab .
+```
+
+Don't forget the `.` at the end: it tells Docker to build from this folder. The first build takes a few minutes. It runs the tests, so a broken build never makes an image. When it finishes, Docker prints a "View build details" link that opens the build in Docker Desktop.
+
+### 2. Run StepLab
+
+The same on every system:
+
+```
+docker run --rm -p 8080:8080 steplab
+```
+
+Open [localhost:8080](http://localhost:8080). Press **Ctrl+C** in the terminal to stop it.
+
+### 3. Add your own labs (optional)
+
+Put your labs in a folder named `my-labs` inside the `steplab` folder, then run the command for your system. Each command is one line.
+
+**Mac or Linux** (Terminal, zsh or bash)
+
+```bash
+docker run --rm -p 8080:8080 -v "$PWD/my-labs:/usr/share/nginx/html/my-labs:ro" steplab
+```
+
+**Windows, PowerShell** (the default in Windows Terminal)
+
+```powershell
+docker run --rm -p 8080:8080 -v "${PWD}\my-labs:/usr/share/nginx/html/my-labs:ro" steplab
+```
+
+**Windows, Command Prompt**
+
+```bat
+docker run --rm -p 8080:8080 -v "%cd%\my-labs:/usr/share/nginx/html/my-labs:ro" steplab
+```
+
+**Windows, Git Bash**
+
+```bash
+MSYS_NO_PATHCONV=1 docker run --rm -p 8080:8080 -v "$(pwd -W)/my-labs:/usr/share/nginx/html/my-labs:ro" steplab
+```
+
+Then open a lab by its file name:
+
+```
+http://localhost:8080/?lab=my-labs/your-lab.md
+```
+
+Edit the lab, save, click `Done` and then refresh the page. The change shows with no rebuild. If a change doesn't show up on Windows, stop and start the container.
+
+> Tip: In labs opened this way, image paths start from the site, not from the lab file. Write `![Login screen](my-labs/images/login.png)`, not `images/login.png`.
+
+**Good to know**
+
+- **Windows:** keep Docker Desktop on **Linux containers** (the default). StepLab's image is a Linux image.
+- **Another port:** change the first number, for example `-p 3000:8080`, then open `localhost:3000`.
+- **Labs with a sandbox** keep their **Launch sandbox** button. The sandbox itself still runs in GitHub Codespaces.
+
 ## VS Code and Antigravity extension
 
 `extension/` holds the StepLab editor extension: a live preview beside your markdown, Export as HTML, snippets (`step`, `step0`, `slides`, `youtube`…) and warnings for out-of-order steps and missing images. It reuses `src/lib`, so the preview matches the website.
@@ -244,6 +316,8 @@ src/
   components/Congrats.tsx    Finish pop-up with confetti
   sandbox.css                Launch sandbox button styles (website and editor preview)
 public/labs/                 Labs served as files (for ?lab= links)
+Dockerfile                   Docker image: builds StepLab, then serves it with nginx
+docker/nginx.conf            nginx settings for the Docker image
 extension/                   VS Code / Antigravity extension
 ```
 
