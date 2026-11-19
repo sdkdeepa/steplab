@@ -1,0 +1,35 @@
+# Opens pull requests when StepLab's packages, GitHub Actions or Docker base images
+# have updates. Updates are grouped and monthly to keep the noise low.
+# Each update is a normal PR: the checks run, and it still needs the maintainer's approval.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      website:
+        patterns: ['*']
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: npm
+    directory: /extension
+    schedule:
+      interval: monthly
+    groups:
+      extension:
+        patterns: ['*']
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly

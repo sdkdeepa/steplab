@@ -1,0 +1,66 @@
+# Checks every pull request before it can be merged into main.
+# The three job names below ("Website", "Extension", "Docker image") are the
+# checks to mark as required in the main branch ruleset.
+name: Checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  website:
+    name: Website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  extension:
+    name: Extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            extension/package-lock.json
+      # The extension reuses the website's code in src/, so it needs the root packages too.
+      - run: npm ci
+      - run: npm ci
+        working-directory: extension
+      - run: npm run build
+        working-directory: extension
+      # Makes sure the extension still packages into a .vsix (it isn't published from here).
+      - run: npx vsce package --no-dependencies --out steplab-check.vsix
+        working-directory: extension
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      # Builds the image (which also runs the tests) without publishing it.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
