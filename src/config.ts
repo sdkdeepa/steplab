@@ -15,3 +15,7 @@ export const STEPLAB_URL = 'https://sdkdeepa.github.io/steplab/'
 /** Where the editor extension is published (shown on the home page). */
 export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=sdkdeepa.steplab'
 export const OPENVSX_URL = 'https://open-vsx.org/extension/sdkdeepa/steplab'
+
+/** The published Docker image and the Docker guide (shown on the home page). */
+export const DOCKER_IMAGE = 'ghcr.io/sdkdeepa/steplab'
+export const DOCKER_GUIDE_URL = 'https://github.com/sdkdeepa/steplab#run-it-with-docker'

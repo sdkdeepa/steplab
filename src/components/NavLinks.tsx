@@ -1,32 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
-import { ThemeMenuItem } from './ThemeToggle'
 
 export interface NavActions {
   onHome: () => void
   onUpload: () => void
   onTemplate: () => void
+  onFormat: () => void
   onAddImages?: () => void
 }
 
-const Icon = {
-  home: <path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" />,
-  upload: <path d="M12 16V4m-5 5 5-5 5 5M5 20h14" />,
-  template: <path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7" />,
-}
-
-function Item({ icon, label, onClick }: { icon: keyof typeof Icon; label: string; onClick: () => void }) {
+function Item({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button className="nav-item" onClick={onClick}>
-      <svg className="ico" viewBox="0 0 24 24" aria-hidden="true">
-        {Icon[icon]}
-      </svg>
       <span>{label}</span>
     </button>
   )
 }
 
-/** Home · Upload .md · Start from a template. Inline on wide screens, a menu on narrow ones. */
-export function NavLinks({ onHome, onUpload, onTemplate, variant }: NavActions & { variant: 'home' | 'lab' }) {
+/** Home · Upload .md · Start from a template · Format. Inline on wide screens, a menu on narrow ones. */
+export function NavLinks({ onHome, onUpload, onTemplate, onFormat, variant }: NavActions & { variant: 'home' | 'lab' }) {
   const [open, setOpen] = useState(false)
   const wrap = useRef<HTMLDivElement>(null)
 
@@ -51,9 +42,10 @@ export function NavLinks({ onHome, onUpload, onTemplate, variant }: NavActions &
   }
   const items = (
     <>
-      <Item icon="home" label="Home" onClick={run(onHome)} />
-      <Item icon="upload" label="Upload .md file" onClick={run(onUpload)} />
-      <Item icon="template" label="Start from a template" onClick={run(onTemplate)} />
+      <Item label="Home" onClick={run(onHome)} />
+      <Item label="Upload markdown" onClick={run(onUpload)} />
+      <Item label="Start from a template" onClick={run(onTemplate)} />
+      <Item label="Format" onClick={run(onFormat)} />
     </>
   )
 
@@ -76,8 +68,6 @@ export function NavLinks({ onHome, onUpload, onTemplate, variant }: NavActions &
       {open && (
         <nav className="navlinks-menu" aria-label="Main">
           {items}
-          <div className="menu-sep" role="separator" />
-          <ThemeMenuItem onDone={() => setOpen(false)} />
         </nav>
       )}
     </div>
