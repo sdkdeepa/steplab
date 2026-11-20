@@ -8,7 +8,7 @@
 #   → http://localhost:8080/?lab=my-labs/your-lab.md
 
 # ---- Stage 1: test and build the app with Node.js ----
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 
 # Install packages first, so Docker can reuse this layer when only the code changes.
