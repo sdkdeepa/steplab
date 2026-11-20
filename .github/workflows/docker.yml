@@ -28,14 +28,14 @@ jobs:
   image:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Lets one build make images for both Intel/AMD (amd64) and Apple Silicon/ARM (arm64).
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-qemu-action@v4
+      - uses: docker/setup-buildx-action@v4
 
       # Signs in to ghcr.io with this repo's built-in token. No secret to create.
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -43,7 +43,7 @@ jobs:
 
       # Works out the image name and tags from the git tag (v0.1.4 → 0.1.4, 0.1, latest).
       - id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
@@ -56,7 +56,7 @@ jobs:
             org.opencontainers.image.licenses=MIT
 
       # Runs the Dockerfile (which runs npm test and npm run build), then pushes the image.
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/amd64,linux/arm64
