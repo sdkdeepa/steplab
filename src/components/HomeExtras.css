@@ -15,6 +15,10 @@
 @media (max-width: 640px) { .install-grid { grid-template-columns: minmax(0, 1fr) } .install-card { padding: 18px } }
 .extras-sub code { font: 500 .92em var(--mono); white-space: nowrap; padding: 2px 6px; border-radius: 6px; background: var(--soft); color: var(--text) }
 
+/* Keep the top bar (logo, menu, theme) visible while scrolling, on every screen size */
+.home-nav { position: sticky; top: 0; z-index: 30 }
+.home section { scroll-margin-top: 84px }
+
 /* Hero: "step-by-step codelab." in red, like the share image */
 .hero-hl { color: var(--red); white-space: nowrap }
 /* Let the hero text column shrink and wrap instead of running under the drop card */
@@ -40,6 +44,11 @@
 .format.format-page { border-top: 0 }
 .format-page h1 { font-size: clamp(32px, 4vw, 48px); margin: 0 0 10px }
 .format-actions { margin-top: 24px }
+
+/* Phones in portrait: show the hero bullet points (they were hidden before) */
+@media (max-width: 600px) {
+  .hero .hero-points { display: grid; gap: 8px; margin-top: 18px; font-size: 14px }
+}
 
 /* Editor section: text on the left, compact install cards on the right (wide screens only) */
 @media (min-width: 1101px) {
