@@ -3,33 +3,12 @@ import { filesFromDrop } from '../lib/importFiles'
 import { Logo } from './Logo'
 import { NavLinks, type NavActions } from './NavLinks'
 import { SiteFooter } from './SiteFooter'
-import { VSCODE_URL, OPENVSX_URL } from '../config'
+import { VSCODE_URL, OPENVSX_URL, DOCKER_IMAGE, DOCKER_GUIDE_URL } from '../config'
+import { MobileSection } from './FormatPage'
 import './HomeExtras.css'
 import { ThemeToggle } from './ThemeToggle'
 import sample from '../labs/example-steplab.md?raw'
-import template from '../labs/template.md?raw'
 import sandboxLab from '../labs/node-api.steplab.md?raw'
-
-const FORMAT = `## Step 1: Set up your environment
-Duration: 5
-
-Install the tools:
-
-\`\`\`bash
-npm install
-\`\`\`
-
-> Tip: Keep each step to one task.
-
-\`\`\`slides
-labs/images/slide-1.png
-labs/images/slide-2.png
-\`\`\`
-
-https://youtu.be/VIDEO_ID
-
-## Step 2: Write the code
-...`
 
 interface Props {
   onOpen: (markdown: string, name?: string) => void
@@ -41,6 +20,18 @@ interface Props {
 export function Home({ onOpen, onReadFiles, nav, error }: Props) {
   const [over, setOver] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+  const dockerCmd = `docker run --rm -p 8080:8080 ${DOCKER_IMAGE}`
+
+  const copyDocker = async () => {
+    try {
+      await navigator.clipboard.writeText(dockerCmd)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      /* clipboard blocked: the command is still visible to copy by hand */
+    }
+  }
 
   function read(files: File[]) {
     setFileError(null)
@@ -70,7 +61,9 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
 
       <section className="hero">
         <div className="hero-copy">
-          <h1>Turn one markdown file into a step-by-step codelab.</h1>
+          <h1>
+            Turn one markdown file into a <span className="hero-hl">step-by-step</span>{' '}codelab.
+          </h1>
           <p>
             Write <code>Step 1</code>, <code>Step 2</code>, <code>Step 3</code>. Drop the file here. Get an interactive
             tutorial with progress, copyable code and a finish line, and download it as one HTML file you can host
@@ -79,6 +72,9 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
           <ul className="hero-points">
             <li>Runs in your browser. Your file never leaves your computer.</li>
             <li>No server, no account, no install.</li>
+            <li>Comes in your favorite IDE: VS Code and Antigravity.</li>
+            <li>Labs can launch a live sandbox, and StepLab runs in your own Docker container.</li>
+            <li>Supports Mobile languages: Kotlin, Swift and Objective-C.</li>
             <li>Open source.</li>
           </ul>
         </div>
@@ -131,11 +127,13 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
         </div>
       </section>
 
-      <section className="extras" id="editor">
-        <h2>Write labs in your editor</h2>
-        <p className="extras-sub">
-          The StepLab extension shows a live preview beside your markdown and exports the finished lab as one HTML file.
-        </p>
+      <section className="extras editor-row" id="editor">
+        <div className="editor-text">
+          <h2>Write labs in your editor</h2>
+          <p className="extras-sub">
+            The StepLab extension shows a live preview beside your markdown and exports the finished lab as one HTML file.
+          </p>
+        </div>
         <div className="install-grid">
           <a className="install-card" href={VSCODE_URL} target="_blank" rel="noopener noreferrer">
             <img src="icons/vscode.png" alt="" width="48" height="48" />
@@ -156,89 +154,43 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
         </div>
       </section>
 
-      <section className="extras" id="mobile">
-        <h2>Built for mobile codelabs too</h2>
-        <p className="extras-sub">
-          Teaching Android or iOS? Code blocks are highlighted for the languages mobile workshops use.
-        </p>
-        <ul className="lang-chips" aria-label="Highlighted mobile languages">
-          <li><b>kotlin</b> Jetpack Compose</li>
-          <li><b>swift</b> SwiftUI</li>
-          <li><b>objectivec</b></li>
-          <li><b>dart</b> Flutter</li>
-          <li><b>java</b></li>
-          <li><b>gradle</b></li>
-          <li><b>xml</b></li>
-        </ul>
-        <p className="extras-sub">
-          Write <code>```kotlin</code>, <code>```swift</code> and so on above a code block.
-        </p>
-      </section>
-
-      <section className="extras" id="sandbox">
-        <h2>Labs with a live sandbox</h2>
-        <p className="extras-sub">
-          Add one line to your lab, <code>sandbox: your-name/your-repo</code>, and attendees get a ready-to-use coding
-          environment in the browser through GitHub Codespaces. Nothing to install.
-        </p>
-        <button type="button" className="btn btn-red" onClick={() => onOpen(sandboxLab, 'node-api.steplab.md')}>
-          Try a sandbox lab
-        </button>
-      </section>
-
-      <section className="format" id="format">
-        <div>
-          <h2>The format</h2>
-          <ul className="rules">
-            <li>
-              Start each step with <code>## Step 1: Title</code>. <code># Step 2 - Title</code> and{' '}
-              <code>### STEP 3. Title</code> work too.
-            </li>
-            <li>
-              Add <code>Duration: 5</code> (or <code>5:00</code>) under a step for its length in minutes.
-            </li>
-            <li>
-              Start with <code>## Step 0: Overview</code> for an introduction. A plain <code>## Overview</code> before
-              Step 1 also becomes Step 0.
-            </li>
-            <li>
-              Start a quote with <code>Note:</code>, <code>Tip:</code> or <code>Warning:</code> to make a callout.
-            </li>
-            <li>
-              Put <code>title:</code> and <code>author:</code> in front matter, or use a <code># Heading</code> for the
-              title.
-            </li>
-            <li>
-              Add a <code>```slides</code> block with image paths for a slide deck with arrow buttons, or paste a
-              Google Slides or PowerPoint link for a live embed.
-            </li>
-            <li>Paste a YouTube link on its own line to embed the video.</li>
-            <li>
-              Add <code>author:</code>, <code>linkedin:</code> and <code>copyright:</code> to show a copyright line on every
-              step, or <code>copyright: none</code> to hide it.
-            </li>
-            <li>
-              Add <code>sandbox:</code> with a GitHub repo to show a “Launch sandbox” button that opens it in GitHub
-              Codespaces.
-            </li>
-            <li>A “Congratulations” pop-up appears when someone finishes the last step.</li>
-            <li>
-              <button className="link inline" onClick={() => onOpen(template, 'template.md')}>
-                Open the template
-              </button>{' '}
-              to see every feature in action.
-            </li>
-          </ul>
-        </div>
-        <div className="code">
-          <div className="code-bar">
-            <span>my-lab.md</span>
-          </div>
-          <pre>
-            <code>{FORMAT}</code>
-          </pre>
+      <section className="extras" id="run">
+        <h2>Hands-on, anywhere</h2>
+        <div className="duo">
+          <article className="duo-card" id="sandbox">
+            <h3>Labs with a live sandbox</h3>
+            <p>
+              Add one line to your lab, <code>sandbox: your-name/your-repo</code>, and attendees get a ready-to-use coding
+              environment in the browser through GitHub Codespaces. Nothing to install.
+            </p>
+            <div className="duo-actions">
+              <button type="button" className="btn btn-red" onClick={() => onOpen(sandboxLab, 'node-api.steplab.md')}>
+                Try a sandbox lab
+              </button>
+            </div>
+          </article>
+          <article className="duo-card" id="docker">
+            <h3>Run StepLab in Docker</h3>
+            <p>
+              Host StepLab on your own computer or server, behind a firewall or at a workshop with poor Wi-Fi. One command,
+              on Mac, Windows or Linux:
+            </p>
+            <div className="cmd">
+              <code>{dockerCmd}</code>
+              <button type="button" className="cmd-copy" onClick={copyDocker} aria-label="Copy the Docker command">
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+            <div className="duo-actions">
+              <a className="btn btn-outline" href={DOCKER_GUIDE_URL} target="_blank" rel="noopener noreferrer">
+                Try with Docker
+              </a>
+            </div>
+          </article>
         </div>
       </section>
+
+      <MobileSection />
 
       <SiteFooter />
     </div>

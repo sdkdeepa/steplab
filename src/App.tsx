@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { parseLab } from './lib/parser'
 import { store } from './lib/storage'
 import { Home } from './components/Home'
+import { FormatPage } from './components/FormatPage'
 import { Viewer } from './components/Viewer'
 import template from './labs/template.md?raw'
 import sample from './labs/example-steplab.md?raw'
@@ -21,6 +22,7 @@ export default function App() {
     return location.hash.startsWith('#step-') ? saved : null
   })
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState<'home' | 'format'>(() => (currentRoute() === 'format' ? 'format' : 'home'))
   const lab = useMemo(() => (source == null ? null : parseLab(source)), [source])
   const [upload, setUpload] = useState<{ files: File[]; error: string | null } | null>(null)
   const imageInput = useRef<HTMLInputElement>(null)
@@ -48,6 +50,7 @@ export default function App() {
       return
     }
     setError(null)
+    setPage('home')
     const route: Route | null = md === template ? 'sample-template' : md === sample ? 'sample' : null
     setAddress(route)
     setSource(md)
@@ -73,6 +76,15 @@ export default function App() {
   function goHome() {
     setAddress(null)
     document.title = 'StepLab'
+    setPage('home')
+    setSource(null)
+    window.scrollTo({ top: 0 })
+  }
+
+  function goFormat() {
+    setAddress('format')
+    document.title = 'Lab format · StepLab'
+    setPage('format')
     setSource(null)
     window.scrollTo({ top: 0 })
   }
@@ -85,12 +97,15 @@ export default function App() {
       setAssets({})
       open(template, 'template.md')
     },
+    onFormat: goFormat,
   }
 
   return (
     <>
       {lab && source != null ? (
         <Viewer lab={lab} source={source} onSourceChange={setSource} nav={nav} assets={assets} onAddImages={nav.onAddImages} />
+      ) : page === 'format' ? (
+        <FormatPage onOpen={open} nav={nav} />
       ) : (
         <Home onOpen={open} onReadFiles={dropFiles} error={error} nav={nav} />
       )}

@@ -40,6 +40,7 @@ npm run dev        # open http://localhost:5173
 
 - **Start from a template** opens a lab that demonstrates every feature (`/sample-template`).
 - **Try the sample lab** opens a short real example (`/sample`).
+- **Format** shows every rule of the lab format, with an example and the mobile languages (`/format`).
 - **Upload a markdown file** opens a pop-up with two tabs: **StepLab lab** and **Old CLaaT codelab**. Drag in your `.md` file **and its images** together, or browse for them. Labs downloaded from StepLab (`.html`) can be uploaded too, and they reopen for editing with their images.
 - **Edit** shows the markdown beside the lab with a live preview, and **Save .md** downloads it.
 - **Download HTML** saves one self-contained file, with images packed in.
@@ -180,7 +181,7 @@ The first line adds the trailing slash StepLab needs to find its files. The seco
 
 ### Addresses
 
-- `/sample-template` opens the feature template, and `/sample` opens the sample lab.
+- `/sample-template` opens the feature template, `/sample` opens the sample lab, and `/format` opens the format guide.
 - Step 1 has a clean address. Later steps add `#step-2`, `#step-3`, and so on.
 - `netlify.toml` includes the rule that makes these addresses work when opened or refreshed. On other hosts, add an equivalent "serve `index.html` for unknown paths" rule.
 
@@ -326,8 +327,9 @@ src/
   lib/claatHtml.ts           Converts exported CLaaT folders (index.html) into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab
   lib/sandbox.ts             Reads `sandbox:` and builds the Launch sandbox button
-  lib/routes.ts              /sample-template and /sample addresses
+  lib/routes.ts              /sample-template, /sample and /format addresses
   components/Home.tsx        Landing page
+  components/FormatPage.tsx  Format guide page (/format) and the mobile languages section
   components/UploadDialog.tsx  Upload pop-up with drag and drop
   components/Viewer.tsx      Lab player: timeline, pager, live editor, download
   components/Congrats.tsx    Finish pop-up with confetti

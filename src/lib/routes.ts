@@ -1,5 +1,5 @@
-/** Friendly addresses for built-in labs: /sample-template and /sample. */
-export const ROUTES = ['sample-template', 'sample'] as const
+/** Friendly addresses: /sample-template and /sample (built-in labs) and /format (the format guide page). */
+export const ROUTES = ['sample-template', 'sample', 'format'] as const
 export type Route = (typeof ROUTES)[number]
 
 const last = () => location.pathname.split('/').pop() || ''

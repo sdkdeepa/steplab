@@ -1,9 +1,8 @@
 /* Home page: editor extension, mobile languages and sandbox */
 .extras { padding: clamp(40px, 6vw, 80px) max(5vw, 16px); max-width: 1240px; margin: 0 auto; border-top: 1px solid var(--line) }
-.extras > h2 { font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 10px }
-.extras-sub { margin: 0 0 24px; color: var(--mute); max-width: 70ch }
+.extras > h2, .editor-text > h2, .mobile-text > h2 { font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 10px }.extras-sub { margin: 0 0 24px; color: var(--mute); max-width: 70ch }
 .extras-sub code { font: 14px var(--mono); background: var(--soft); padding: 2px 6px; border-radius: 6px; color: var(--text) }
-.install-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 860px }
+.install-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px }
 .install-card { display: flex; align-items: center; gap: 16px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); color: var(--text); text-decoration: none; transition: transform .15s, box-shadow .15s, border-color .15s }
 .install-card:hover, .install-card:focus-visible { transform: translateY(-2px); border-color: var(--red); box-shadow: 0 14px 30px -18px #0006; outline: none }
 .install-card img { width: 48px; height: 48px; flex: none; object-fit: contain }
@@ -15,3 +14,49 @@
 .lang-chips b { font: 600 14px var(--mono); color: var(--red) }
 @media (max-width: 640px) { .install-grid { grid-template-columns: minmax(0, 1fr) } .install-card { padding: 18px } }
 .extras-sub code { font: 500 .92em var(--mono); white-space: nowrap; padding: 2px 6px; border-radius: 6px; background: var(--soft); color: var(--text) }
+
+/* Hero: "step-by-step codelab." in red, like the share image */
+.hero-hl { color: var(--red); white-space: nowrap }
+/* Let the hero text column shrink and wrap instead of running under the drop card */
+.hero-copy { min-width: 0 }
+.hero h1 { overflow-wrap: break-word }
+@media (min-width: 861px) and (max-width: 1240px) { .hero h1 { font-size: clamp(36px, 4.4vw, 54px) } }
+
+/* Sandbox and Docker, side by side (stacked on narrow screens) */
+.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px }
+.duo-card { display: flex; flex-direction: column; gap: 14px; padding: 26px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper) }
+.duo-card h3 { margin: 0; font: 700 clamp(20px, 2vw, 24px) var(--display) }
+.duo-card p { margin: 0; color: var(--mute) }
+.duo-card p code { font: 500 .92em var(--mono); white-space: nowrap; padding: 2px 6px; border-radius: 6px; background: var(--soft); color: var(--text) }
+.duo-actions { margin-top: auto; padding-top: 4px; display: flex; flex-wrap: wrap; gap: 10px }
+.cmd { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border-radius: 12px; background: #161b22; color: #e6edf3 }
+.cmd code { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; font: 13px/1.5 var(--mono) }
+.cmd-copy { flex: none; min-height: 34px; padding: 0 12px; border-radius: 8px; border: 1px solid #30363d; background: transparent; color: #e6edf3; font: 600 13px var(--sans, inherit); cursor: pointer }
+.cmd-copy:hover { border-color: #8b949e }
+@media (max-width: 860px) { .duo { grid-template-columns: minmax(0, 1fr) } }
+@media (max-width: 640px) { .duo-card { padding: 20px } }
+
+/* Format page (/format) */
+.format.format-page { border-top: 0 }
+.format-page h1 { font-size: clamp(32px, 4vw, 48px); margin: 0 0 10px }
+.format-actions { margin-top: 24px }
+
+/* Editor section: text on the left, compact install cards on the right (wide screens only) */
+@media (min-width: 1101px) {
+  .editor-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: center }
+  .editor-row .extras-sub { margin-bottom: 0 }
+  .editor-row .install-grid { grid-template-columns: repeat(2, minmax(0, 290px)) }
+  .editor-row .install-card { padding: 18px 20px }
+  .editor-row .install-card b, .editor-row .install-card small { white-space: nowrap }
+}
+
+/* Mobile languages (wide screens only): text on the left, a box with the chips and the hint on the right.
+   The box is as wide as the two install cards above, so both sections line up.
+   Narrower screens keep the stacked layout: heading, text, chips, hint. */
+@media (min-width: 1101px) {
+  .mobile-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 596px); gap: 32px; align-items: center }
+  .mobile-text .extras-sub { margin-bottom: 0 }
+  .mobile-box { padding: 22px 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper) }
+  .mobile-box .lang-chips { margin: 0 0 16px }
+  .mobile-box .mobile-hint { margin: 0 }
+}

@@ -60,9 +60,6 @@ export function ThemeMenuItem({ onDone }: { onDone?: () => void }) {
         onDone?.()
       }}
     >
-      <svg className={`ico${theme === 'dark' ? ' ico-sun' : ''}`} viewBox="0 0 24 24" aria-hidden="true">
-        {theme === 'dark' ? Sun : Moon}
-      </svg>
       <span>{theme === 'dark' ? 'Light theme' : 'Dark theme'}</span>
     </button>
   )
