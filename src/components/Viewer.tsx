@@ -6,6 +6,7 @@ import { wireDecks } from '../lib/deck'
 import { linkedinText, slugify } from '../lib/parser'
 import { exportLabHtml } from '../lib/exportHtml'
 import { SANDBOX_LABEL, SANDBOX_TITLE } from '../lib/sandbox'
+import { COLAB_LABEL, COLAB_TITLE } from '../lib/colab'
 import '../sandbox.css'
 import { downloadFile } from '../lib/storage'
 import { Congrats } from './Congrats'
@@ -205,16 +206,28 @@ export function Viewer({ lab, source, onSourceChange, nav, assets = {}, onAddIma
               {minutesLeft > 0 && ` · ${minutesLeft} min left`}
             </p>
           )}
-          {lab.sandbox && (
+          {(lab.sandbox || lab.colab) && (
             <div className="sandbox-row">
-              <a className="sandbox-btn" href={lab.sandbox.url} target="_blank" rel="noopener noreferrer" title={SANDBOX_TITLE}>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="16" rx="3" />
-                  <path d="m7 10 3 2-3 2M12 15h5" />
-                </svg>
-                {SANDBOX_LABEL}
-                <small>Codespaces</small>
-              </a>
+              {lab.sandbox && (
+                <a className="sandbox-btn" href={lab.sandbox.url} target="_blank" rel="noopener noreferrer" title={SANDBOX_TITLE}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="16" rx="3" />
+                    <path d="m7 10 3 2-3 2M12 15h5" />
+                  </svg>
+                  {SANDBOX_LABEL}
+                  <small>Codespaces</small>
+                </a>
+              )}
+              {lab.colab && (
+                <a className="sandbox-btn colab-btn" href={lab.colab.url} target="_blank" rel="noopener noreferrer" title={COLAB_TITLE}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="5" y="3" width="14" height="18" rx="2" />
+                    <path d="M9 3v18M12 8h4M12 12h4" />
+                  </svg>
+                  {COLAB_LABEL}
+                  <small>Notebook</small>
+                </a>
+              )}
             </div>
           )}
         </div>

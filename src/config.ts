@@ -10,7 +10,7 @@ export const CREATOR = {
 export const hasCreatorLink = !CREATOR.linkedin.includes('REPLACE-WITH')
 
 /** Where "Made with StepLab" in downloaded labs points to. */
-export const STEPLAB_URL = 'https://sdkdeepa.github.io/steplab/'
+export const STEPLAB_URL = 'https://steplab.dev/'
 
 /** Where the editor extension is published (shown on the home page). */
 export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=sdkdeepa.steplab'

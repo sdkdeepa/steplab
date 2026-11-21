@@ -1,6 +1,6 @@
 /* "Launch sandbox" button under the lab title (website and editor preview).
    Shown only when the lab's front matter has `sandbox:`. */
-.sandbox-row { margin: 12px 0 2px; display: flex; justify-content: center }
+.sandbox-row { margin: 12px 0 2px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center }
 .sandbox-btn {
   display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px;
   border-radius: 999px; border: 2px solid var(--red, #e8251a); background: transparent;

@@ -1,5 +1,6 @@
 import { renderMarkdown } from './markdown'
 import { readSandbox, type Sandbox } from './sandbox'
+import { readColab, type Colab } from './colab'
 
 export interface Step {
   /** The number written in the heading ("Step 3" -> 3). Sections before Step 1 get 0. */
@@ -30,6 +31,8 @@ export interface Lab {
   summary?: string
   /** From `sandbox:` in front matter: a GitHub repo to open in Codespaces. */
   sandbox: Sandbox | null
+  /** From `colab:` in front matter: a notebook on GitHub or Drive to open in Google Colab. */
+  colab: Colab | null
   steps: Step[]
   warnings: string[]
   totalMinutes: number
@@ -149,6 +152,7 @@ export function parseLab(source: string, render: (md: string) => string = render
     author: meta.author,
     summary: meta.summary || meta.description,
     sandbox: readSandbox(meta.sandbox),
+    colab: readColab(meta.colab),
     steps,
     warnings,
     totalMinutes: steps.reduce((a, s) => a + s.duration, 0),
