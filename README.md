@@ -155,6 +155,24 @@ To make the sandbox repo:
 
 Example: [sdkdeepa/steplab-sandbox-node-api](https://github.com/sdkdeepa/steplab-sandbox-node-api), a 25-minute Node.js API lab with a `npm run check` script that checks each step. It's also the lab behind **Try a sandbox lab** on the home page.
 
+### Notebook (Google Colab)
+
+For Python, data and AI labs, give attendees a notebook they can run in the browser, free, with just a Google account. Add one line to the front matter:
+
+~~~yaml
+---
+colab: https://github.com/your-name/your-repo/blob/main/notebooks/lab.ipynb
+---
+~~~
+
+StepLab shows an **Open in Colab** button under the lab title (next to **Launch sandbox** if the lab has both), in the website, the downloaded HTML and the editor preview. Each attendee gets their own editable copy, so your notebook never changes.
+
+These links work:
+
+- A notebook on GitHub: `https://github.com/your-name/your-repo/blob/main/path/lab.ipynb` (the repo must be public)
+- A Colab link: `https://colab.research.google.com/github/...` or `https://colab.research.google.com/drive/FILE_ID`
+- A notebook in Google Drive: `https://drive.google.com/file/d/FILE_ID/view` (share it with **Anyone with the link**)
+
 > Tip: Add a last step that reminds attendees to stop their codespace at [github.com/codespaces](https://github.com/codespaces) so it stops using their free hours.
 
 See [`public/labs/template.md`](public/labs/template.md) for every feature, and [`public/labs/example-steplab.md`](public/labs/example-steplab.md) for a short real lab.
@@ -327,13 +345,14 @@ src/
   lib/claatHtml.ts           Converts exported CLaaT folders (index.html) into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab
   lib/sandbox.ts             Reads `sandbox:` and builds the Launch sandbox button
+  lib/colab.ts               Reads `colab:` and builds the Open in Colab button
   lib/routes.ts              /sample-template, /sample and /format addresses
   components/Home.tsx        Landing page
   components/FormatPage.tsx  Format guide page (/format) and the mobile languages section
   components/UploadDialog.tsx  Upload pop-up with drag and drop
   components/Viewer.tsx      Lab player: timeline, pager, live editor, download
   components/Congrats.tsx    Finish pop-up with confetti
-  sandbox.css                Launch sandbox button styles (website and editor preview)
+  sandbox.css                Launch sandbox and Open in Colab button styles (website and editor preview)
 public/labs/                 Labs served as files (for ?lab= links)
 Dockerfile                   Docker image: builds StepLab, then serves it with nginx
 docker/nginx.conf            nginx settings for the Docker image

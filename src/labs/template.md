@@ -5,6 +5,7 @@ linkedin: https://www.linkedin.com/in/your-profile   # optional: a LinkedIn link
 copyright: © {year} {author}. All rights reserved.   # optional: write "none" to hide the copyright line
 copyright_position: both                             # top, bottom or both
 # sandbox: your-name/your-sandbox-repo             # optional: remove the # to add a "Launch sandbox" button (GitHub Codespaces)
+# colab: https://github.com/your-name/your-repo/blob/main/lab.ipynb   # optional: remove the # to add an "Open in Colab" button (Google Colab notebook)
 ---
 
 # StepLab: workshops, step by step

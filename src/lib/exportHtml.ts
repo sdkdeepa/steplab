@@ -3,6 +3,7 @@ import { linkedinText } from './parser'
 import { wireDecks } from './deck'
 import { STEPLAB_URL } from '../config'
 import { sandboxButtonHtml } from './sandbox'
+import { colabButtonHtml } from './colab'
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -74,7 +75,7 @@ ${bottom}</section>`,
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b0d0f">
 <meta name="generator" content="StepLab">
 <title>${esc(lab.title)}</title>
@@ -84,7 +85,7 @@ ${bottom}</section>`,
 <style>${EXPORT_CSS}</style>
 </head>
 <body>
-<header class="top"><a class="brand" href="${esc(STEPLAB_URL)}" target="_blank" rel="noopener noreferrer" aria-label="StepLab"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="20" width="10" height="9" rx="2" fill="currentColor" opacity=".35"/><rect x="11" y="12" width="10" height="17" rx="2" fill="currentColor" opacity=".65"/><rect x="19" y="3" width="10" height="26" rx="2" fill="#e8251a"/></svg><span>StepLab</span></a><h1>${esc(lab.title)}</h1><span id="left"></span>${sandboxButtonHtml(lab.sandbox)}<button id="theme" type="button" aria-label="Switch theme"></button></header>
+<header class="top"><a class="brand" href="${esc(STEPLAB_URL)}" target="_blank" rel="noopener noreferrer" aria-label="StepLab"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="20" width="10" height="9" rx="2" fill="currentColor" opacity=".35"/><rect x="11" y="12" width="10" height="17" rx="2" fill="currentColor" opacity=".65"/><rect x="19" y="3" width="10" height="26" rx="2" fill="#e8251a"/></svg><span>StepLab</span></a><h1>${esc(lab.title)}</h1><span id="left"></span>${sandboxButtonHtml(lab.sandbox)}${colabButtonHtml(lab.colab)}<button id="theme" type="button" aria-label="Switch theme"></button></header>
 <div class="meter"><i id="bar"></i></div>
 <div class="wrap">
 <nav class="rail"><ol id="rail"></ol></nav>

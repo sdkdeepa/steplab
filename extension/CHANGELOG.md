@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7
+- New: **Open in Colab button.** Add `colab:` with a notebook link to a lab's front matter (a notebook on GitHub, or a Google Drive / Colab link) and StepLab shows an "Open in Colab" button under the title, in the preview and in exported HTML. Each attendee gets their own editable copy of the notebook in Google Colab. Works next to the Launch sandbox button. The template shows the line, commented out.
+- StepLab has a new home: **https://steplab.dev**. The "Made with StepLab" link in exported HTML now points there (the old address redirects).
+
 ## 0.1.4
 - New: **Launch sandbox button.** Add `sandbox: your-name/your-repo` to a lab's front matter and StepLab shows a "Launch sandbox" button under the title, in the preview and in exported HTML. It opens that GitHub repo in Codespaces, so attendees get a ready-to-use coding environment in the browser with nothing to install. The template shows the line, commented out.
 

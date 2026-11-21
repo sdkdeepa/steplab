@@ -88,6 +88,10 @@ export function FormatPage({ onOpen, nav }: Props) {
               Add <code>sandbox:</code> with a GitHub repo to show a “Launch sandbox” button that opens it in GitHub
               Codespaces.
             </li>
+            <li>
+              Add <code>colab:</code> with a notebook link (GitHub or Google Drive) to show an “Open in Colab” button. Each
+              attendee gets their own copy of the notebook in Google Colab.
+            </li>
             <li>A “Congratulations” pop-up appears when someone finishes the last step.</li>
           </ul>
           <div className="format-actions">
