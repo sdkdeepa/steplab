@@ -7,7 +7,7 @@ Write a step-by-step codelab in **one markdown file** and see it as an interacti
 - [Feature request](https://github.com/sdkdeepa/steplab/issues/new?labels=enhancement)
 
 ## Quick Start
-![A lab in the StepLab preview, exported as HTML](media/demo-html.gif)
+![A lab in the StepLab preview, exported as HTML](https://raw.githubusercontent.com/sdkdeepa/steplab/main/extension/media/demo-html.gif)
 
 
 1. Install StepLab from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sdkdeepa.steplab) or [Open VSX](https://open-vsx.org/extension/sdkdeepa/steplab).
@@ -19,7 +19,7 @@ Write a step-by-step codelab in **one markdown file** and see it as an interacti
 
 ## Run the lab's notebook with Colab
 
-![Opening a lab's notebook and connecting it to Colab](media/demo-colab.gif)
+![Opening a lab's notebook and connecting it to Colab](https://raw.githubusercontent.com/sdkdeepa/steplab/main/extension/media/demo-colab.gif)
 
 1. Add `colab:` with a GitHub notebook link to your lab's front matter.
 2. Click **Open in editor** in the preview, or run `StepLab: Open Lab Notebook in Editor`. StepLab saves the notebook next to your lab and opens it. If you already have a copy, it asks before replacing it.
