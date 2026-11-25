@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { readColab, colabButtonHtml } from '../colab'
+import { readColab, colabButtonHtml, labNotebook, looksLikeNotebook } from '../colab'
+import { readFrontMatter } from '../frontMatter'
 import { parseLab } from '../parser'
 
 const GH = 'https://colab.research.google.com/github/sdkdeepa/demo/blob/main/notebooks/lab.ipynb'
@@ -61,5 +62,39 @@ describe('colab in a lab', () => {
     expect(html).toContain('target="_blank"')
     expect(colabButtonHtml(lab.colab, false)).not.toContain('target=')
     expect(colabButtonHtml(null)).toBe('')
+  })
+})
+
+describe('labNotebook', () => {
+  it('gives the raw GitHub link and a file name for GitHub notebooks', () => {
+    expect(labNotebook(readColab('https://github.com/sdkdeepa/demo/blob/main/notebooks/lab.ipynb'))).toEqual({
+      raw: 'https://raw.githubusercontent.com/sdkdeepa/demo/main/notebooks/lab.ipynb',
+      name: 'lab.ipynb',
+    })
+  })
+
+  it('makes odd file names safe', () => {
+    expect(labNotebook(readColab('https://github.com/a/b/blob/main/My%20Lab~v2.ipynb'))?.name).toBe('My-Lab-v2.ipynb')
+  })
+
+  it('returns null for Drive notebooks and missing values', () => {
+    expect(labNotebook(readColab('https://colab.research.google.com/drive/1AbCdEfGhIjKlMnOpQrStUvWxYz012345'))).toBeNull()
+    expect(labNotebook(null)).toBeNull()
+  })
+})
+
+describe('looksLikeNotebook', () => {
+  it('accepts a notebook and rejects other text', () => {
+    expect(looksLikeNotebook('{"cells":[],"nbformat":4,"nbformat_minor":5,"metadata":{}}')).toBe(true)
+    expect(looksLikeNotebook('<html>Not found</html>')).toBe(false)
+    expect(looksLikeNotebook('{"cells":"x"}')).toBe(false)
+  })
+})
+
+describe('readFrontMatter', () => {
+  it('reads colab: with a comment and Windows line endings', () => {
+    const meta = readFrontMatter('---\r\ntitle: Demo\r\ncolab: https://github.com/a/b/blob/main/x.ipynb   # notebook\r\n---\r\n## Step 1: Go\r\n')
+    expect(meta.colab).toBe('https://github.com/a/b/blob/main/x.ipynb')
+    expect(meta.title).toBe('Demo')
   })
 })

@@ -69,3 +69,41 @@ export function colabButtonHtml(colab: Colab | null, newTab = true): string {
   const target = newTab ? ' target="_blank" rel="noopener noreferrer"' : ''
   return `<a class="sandbox-btn colab-btn" href="${escAttr(colab.url)}"${target} title="${escAttr(COLAB_TITLE)}"><svg viewBox="0 0 24 24" aria-hidden="true">${COLAB_ICON_PATHS}</svg>${escAttr(COLAB_LABEL)}<small>Notebook</small></a>`
 }
+
+/** A GitHub notebook the editor extension can download, so it runs in VS Code. */
+export interface LabNotebook {
+  /** Where to download the .ipynb from (raw.githubusercontent.com). */
+  raw: string
+  /** File name to save it as, e.g. "lab.ipynb". */
+  name: string
+}
+
+const COLAB_GITHUB = /^https:\/\/colab\.research\.google\.com\/github\/([^/]+)\/([^/]+)\/blob\/(.+\.ipynb)$/i
+
+/**
+ * The downloadable copy of a lab's notebook, or null for Drive notebooks
+ * (those need a Google sign-in, so they stay "Open in Colab" in the browser).
+ */
+export function labNotebook(colab: Colab | null): LabNotebook | null {
+  if (!colab || colab.source !== 'github') return null
+  const m = colab.url.match(COLAB_GITHUB)
+  if (!m) return null
+  const file = decodeURIComponent(m[3].split('/').pop() || '')
+  // Keep the saved name simple and safe on every OS.
+  const name = file.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^[-.]+/, '') || 'lab.ipynb'
+  return { raw: `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}`, name: /\.ipynb$/i.test(name) ? name : `${name}.ipynb` }
+}
+
+/** Is this text a Jupyter notebook? (A quick check before saving a download.) */
+export function looksLikeNotebook(text: string): boolean {
+  try {
+    const nb = JSON.parse(text)
+    return !!nb && typeof nb === 'object' && Array.isArray(nb.cells) && typeof nb.nbformat === 'number'
+  } catch {
+    return false
+  }
+}
+
+/** Button text for the editor preview's "open the notebook here" button. */
+export const NOTEBOOK_LABEL = 'Open in editor'
+export const NOTEBOOK_TITLE = 'Saves a copy of the notebook next to this lab and opens it here. Run it with the Colab extension or any Jupyter kernel.'

@@ -131,7 +131,7 @@ export function MobileSection() {
         <ul className="lang-chips" aria-label="Highlighted mobile languages">
           <li><b>kotlin</b> Jetpack Compose</li>
           <li><b>swift</b> SwiftUI</li>
-          <li><b>objectivec</b></li>
+          <li><b>objectivec</b> Objective-C</li>
           <li><b>dart</b> Flutter</li>
           <li><b>java</b></li>
           <li><b>gradle</b></li>
