@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.9
+- Fixed: the two demo GIFs on the extension page (Quick Start and Colab) now load.
+
 ## 0.1.8
 - New: **Open the lab notebook in the editor.** When a lab's `colab:` link is a notebook on GitHub, the preview shows an **Open in editor** button next to **Open in Colab** (also in the Command Palette: **StepLab: Open Lab Notebook in Editor**). StepLab saves a copy as `notebooks/<name>.ipynb` next to your lab and opens it. If you already have a copy, StepLab asks before replacing it, so your changes are safe.
 - Run it with Google's **Colab** extension (free Colab servers, sign in with Google) or any Jupyter kernel. StepLab shows a one-time tip about the Colab extension; it's optional.
