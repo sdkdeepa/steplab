@@ -1,8 +1,11 @@
 import * as vscode from 'vscode'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import * as https from 'node:https'
 import { convertClaat, looksLikeClaat } from '../../src/lib/claat'
 import { convertClaatHtml, isClaatHtml } from '../../src/lib/claatHtml'
+import { readColab, labNotebook, looksLikeNotebook } from '../../src/lib/colab'
+import { readFrontMatter } from '../../src/lib/frontMatter'
 
 /** Same rule as the web app: "## Step 3: Title", "# Step 2 - Title", "### STEP 1. Title", "## Step 4 · Title". */
 const STEP_HEADING = /^#{1,3}\s*step\s*(\d+)\s*[:.)\-–—·•|]?\s*(.*)$/i
@@ -121,6 +124,11 @@ class Preview {
     return roots
   }
 
+  /** The lab the preview is showing (for commands run while the preview has focus). */
+  static currentDoc() {
+    return Preview.current?.doc
+  }
+
   private title() {
     return `StepLab: ${path.basename(this.doc.fileName)}`
   }
@@ -193,6 +201,8 @@ class Preview {
           if (open) vscode.env.openExternal(target)
         })
       }
+    } else if (m.type === 'notebook') {
+      openLabNotebook(this.ctx, this.doc)
     } else if (m.type === 'exportError') {
       vscode.window.showErrorMessage(`StepLab export failed: ${m.message}`)
       this.exportResolve?.()
@@ -382,6 +392,151 @@ async function convertClaatAt(target: vscode.Uri | undefined, ifExists: 'ask' | 
   return out
 }
 
+/* ---------- lab notebook → open and run it in the editor ---------- */
+const NOTEBOOK_MAX_BYTES = 25 * 1024 * 1024
+const COLAB_EXTENSION = 'google.colab'
+const COLAB_TIP_OFF = 'steplab.colabTipOff'
+
+/**
+ * Downloads a public GitHub notebook (https only, size-capped, 30 s timeout).
+ * Uses Node's https module rather than fetch so the editor's proxy settings apply.
+ */
+function download(url: string, redirects = 3): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, { headers: { 'User-Agent': 'StepLab-VSCode' }, timeout: 30000 }, (res) => {
+      const status = res.statusCode ?? 0
+      if (status >= 300 && status < 400 && res.headers.location) {
+        res.resume()
+        const next = new URL(res.headers.location, url)
+        if (next.protocol !== 'https:' || redirects <= 0) return reject(new Error('GitHub sent an unexpected redirect.'))
+        return resolve(download(next.toString(), redirects - 1))
+      }
+      if (status !== 200) {
+        res.resume()
+        return reject(new Error(status === 404 ? 'GitHub says the notebook was not found (404). Check the link, and that the repository is public.' : `GitHub answered ${status}.`))
+      }
+      const chunks: Buffer[] = []
+      let size = 0
+      res.on('data', (c: Buffer) => {
+        size += c.length
+        if (size > NOTEBOOK_MAX_BYTES) {
+          req.destroy()
+          reject(new Error('The notebook is larger than 25 MB. Open it in Colab in the browser instead.'))
+        } else chunks.push(c)
+      })
+      res.on('end', () => resolve(Buffer.concat(chunks)))
+      res.on('error', reject)
+    })
+    req.on('timeout', () => req.destroy(new Error('The download timed out. Check your internet connection and try again.')))
+    req.on('error', reject)
+  })
+}
+
+async function exists(uri: vscode.Uri) {
+  try {
+    await vscode.workspace.fs.stat(uri)
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * The lab's `colab:` notebook, opened in the editor:
+ * saved as notebooks/<name>.ipynb next to the lab, never replacing a copy without asking.
+ * Drive notebooks need a Google sign-in, so those open in Colab in the browser.
+ */
+async function openLabNotebook(ctx: vscode.ExtensionContext, doc: vscode.TextDocument) {
+  const colab = readColab(readFrontMatter(doc.getText()).colab)
+  if (!colab) {
+    vscode.window.showInformationMessage('This lab has no notebook. Add a `colab:` line with a GitHub .ipynb link to its front matter.')
+    return
+  }
+  const nb = labNotebook(colab)
+  if (!nb) {
+    const pick = await vscode.window.showInformationMessage(
+      'This notebook is on Google Drive, so it opens in Colab in your browser. (Put the notebook on GitHub to open it here too.)',
+      'Open in Colab',
+    )
+    if (pick) vscode.env.openExternal(vscode.Uri.parse(colab.url))
+    return
+  }
+
+  let target: vscode.Uri
+  if (doc.uri.scheme === 'file') {
+    target = vscode.Uri.joinPath(vscode.Uri.file(path.dirname(doc.uri.fsPath)), 'notebooks', nb.name)
+  } else {
+    // Unsaved lab: ask where to put the notebook.
+    const folder = vscode.workspace.workspaceFolders?.[0]?.uri
+    const picked = await vscode.window.showSaveDialog({
+      defaultUri: folder ? vscode.Uri.joinPath(folder, 'notebooks', nb.name) : undefined,
+      filters: { 'Jupyter notebook': ['ipynb'] },
+      saveLabel: 'Save notebook',
+    })
+    if (!picked) return
+    target = picked
+  }
+
+  const shown = vscode.workspace.asRelativePath(target)
+  let fetchFresh = true
+  if (await exists(target)) {
+    const pick = await vscode.window.showWarningMessage(
+      `${shown} already exists and may have your changes. Open your copy, or replace it with a fresh copy from GitHub?`,
+      { modal: true },
+      'Open my copy',
+      'Replace with fresh copy',
+    )
+    if (!pick) return
+    fetchFresh = pick === 'Replace with fresh copy'
+  }
+
+  if (fetchFresh) {
+    try {
+      const bytes = await vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: `StepLab: downloading ${nb.name}…` },
+        () => download(nb.raw),
+      )
+      if (!looksLikeNotebook(bytes.toString('utf8'))) throw new Error("The file at that link isn't a Jupyter notebook.")
+      await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(target, '..'))
+      await vscode.workspace.fs.writeFile(target, bytes)
+    } catch (err) {
+      const pick = await vscode.window.showErrorMessage(
+        `Couldn't download the notebook. ${err instanceof Error ? err.message : String(err)}`,
+        'Open in Colab instead',
+      )
+      if (pick) vscode.env.openExternal(vscode.Uri.parse(colab.url))
+      return
+    }
+  }
+
+  try {
+    const notebook = await vscode.workspace.openNotebookDocument(target)
+    await vscode.window.showNotebookDocument(notebook, { viewColumn: vscode.ViewColumn.Active })
+  } catch {
+    await vscode.commands.executeCommand('vscode.open', target)
+  }
+  if (fetchFresh) vscode.window.setStatusBarMessage(`StepLab: saved ${shown}`, 5000)
+  suggestColabExtension(ctx)
+}
+
+/** A one-time tip: Google's Colab extension runs notebooks on Colab's servers. Never required. */
+async function suggestColabExtension(ctx: vscode.ExtensionContext) {
+  if (vscode.extensions.getExtension(COLAB_EXTENSION) || ctx.globalState.get(COLAB_TIP_OFF)) return
+  const pick = await vscode.window.showInformationMessage(
+    "Tip: Google's Colab extension runs this notebook on Colab's servers (sign in with Google). Any other Jupyter kernel works too.",
+    'Show Colab extension',
+    "Don't show again",
+  )
+  if (pick === "Don't show again") await ctx.globalState.update(COLAB_TIP_OFF, true)
+  else if (pick) {
+    try {
+      await vscode.commands.executeCommand('extension.open', COLAB_EXTENSION)
+    } catch {
+      await vscode.commands.executeCommand('workbench.extensions.search', COLAB_EXTENSION)
+    }
+  }
+}
+
 /* ---------- step outline (Ctrl/Cmd+Shift+O and the Outline view) ---------- */
 class StepSymbols implements vscode.DocumentSymbolProvider {
   provideDocumentSymbols(doc: vscode.TextDocument) {
@@ -455,6 +610,12 @@ export function activate(ctx: vscode.ExtensionContext) {
         { location: vscode.ProgressLocation.Notification, title: 'StepLab: converting and building HTML…' },
         () => preview.exportHtml(),
       )
+    }),
+
+    vscode.commands.registerCommand('steplab.openNotebook', () => {
+      const doc = activeLab() ?? Preview.currentDoc()
+      if (!doc) return vscode.window.showInformationMessage('Open a markdown (.md) lab file first.')
+      return openLabNotebook(ctx, doc)
     }),
 
     vscode.languages.registerDocumentSymbolProvider({ language: 'markdown' }, new StepSymbols()),

@@ -15,3 +15,5 @@
   .sandbox-row { justify-content: flex-start; margin-top: 10px }
   .sandbox-btn { min-height: 44px }
 }
+/* The editor preview's "Open in editor" notebook button is a <button>, so it needs the page font. */
+button.sandbox-btn { font-family: inherit; cursor: pointer }

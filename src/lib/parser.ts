@@ -1,6 +1,7 @@
 import { renderMarkdown } from './markdown'
 import { readSandbox, type Sandbox } from './sandbox'
 import { readColab, type Colab } from './colab'
+import { splitFrontMatter } from './frontMatter'
 
 export interface Step {
   /** The number written in the heading ("Step 3" -> 3). Sections before Step 1 get 0. */
@@ -57,21 +58,10 @@ export function parseDuration(raw: string): number {
   return Math.round(Number(n[1]) * (n[2] ? 60 : 1))
 }
 
-const cleanMetaValue = (v: string) => v.replace(/\s+#\s.*$/, '').trim().replace(/^["']|["']$/g, '')
-
 export function parseLab(source: string, render: (md: string) => string = renderMarkdown): Lab {
-  let text = source.replace(/\r\n?/g, '\n').replace(/^﻿/, '')
-  const meta: Record<string, string> = {}
-  const setMeta = (k: string, v: string) => (meta[k.trim().toLowerCase().replace(/\s+/g, '_')] = cleanMetaValue(v))
-
-  const fm = text.match(/^---\n([\s\S]*?)\n---\n?/)
-  if (fm) {
-    for (const row of fm[1].split('\n')) {
-      const m = row.match(/^(\w+)\s*:\s*(.*)$/)
-      if (m) setMeta(m[1], m[2])
-    }
-    text = text.slice(fm[0].length)
-  }
+  const split = splitFrontMatter(source.replace(/\r\n?/g, '\n').replace(/^\uFEFF/, ''))
+  const meta = split.meta
+  const text = split.body
 
   type Raw = { num: number; title: string; lines: string[]; intro?: boolean }
   const raw: Raw[] = []

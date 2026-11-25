@@ -2,7 +2,7 @@
   "name": "steplab",
   "displayName": "StepLab: Codelabs from Markdown",
   "description": "Write a step-by-step codelab in one markdown file (## Step 0, ## Step 1…) and preview it live: steps, timer, slides, YouTube, copyable code and a finish line. Export it as one HTML file.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "publisher": "sdkdeepa",
   "author": {
     "name": "Deepa Subramanian"
@@ -39,7 +39,9 @@
     "gdg",
     "teaching",
     "antigravity",
-    "claat"
+    "claat",
+    "colab",
+    "jupyter"
   ],
   "activationEvents": [
     "onLanguage:markdown",
@@ -71,6 +73,12 @@
         "category": "StepLab"
       },
       {
+        "command": "steplab.openNotebook",
+        "title": "Open Lab Notebook in Editor",
+        "category": "StepLab",
+        "icon": "$(notebook)"
+      },
+      {
         "command": "steplab.importClaat",
         "title": "Convert CLaaT Codelab to StepLab",
         "category": "StepLab"
@@ -97,6 +105,10 @@
         {
           "command": "steplab.insertStep",
           "when": "editorLangId == markdown"
+        },
+        {
+          "command": "steplab.openNotebook",
+          "when": "editorLangId == markdown || activeWebviewPanelId == steplab.preview"
         }
       ],
       "explorer/context": [

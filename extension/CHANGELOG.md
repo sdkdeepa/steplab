@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.8
+- New: **Open the lab notebook in the editor.** When a lab's `colab:` link is a notebook on GitHub, the preview shows an **Open in editor** button next to **Open in Colab** (also in the Command Palette: **StepLab: Open Lab Notebook in Editor**). StepLab saves a copy as `notebooks/<name>.ipynb` next to your lab and opens it. If you already have a copy, StepLab asks before replacing it, so your changes are safe.
+- Run it with Google's **Colab** extension (free Colab servers, sign in with Google) or any Jupyter kernel. StepLab shows a one-time tip about the Colab extension; it's optional.
+- Google Drive notebooks keep opening in Colab in the browser, since they need a Google sign-in.
+
 ## 0.1.7
 - New: **Open in Colab button.** Add `colab:` with a notebook link to a lab's front matter (a notebook on GitHub, or a Google Drive / Colab link) and StepLab shows an "Open in Colab" button under the title, in the preview and in exported HTML. Each attendee gets their own editable copy of the notebook in Google Colab. Works next to the Launch sandbox button. The template shows the line, commented out.
 - StepLab has a new home: **https://steplab.dev**. The "Made with StepLab" link in exported HTML now points there (the old address redirects).

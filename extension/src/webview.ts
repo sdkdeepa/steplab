@@ -8,7 +8,7 @@ import { sanitize } from '../../src/lib/sanitize'
 import { wireDecks } from '../../src/lib/deck'
 import { exportLabHtml } from '../../src/lib/exportHtml'
 import { sandboxButtonHtml } from '../../src/lib/sandbox'
-import { colabButtonHtml } from '../../src/lib/colab'
+import { colabButtonHtml, labNotebook, COLAB_ICON_PATHS, NOTEBOOK_LABEL, NOTEBOOK_TITLE } from '../../src/lib/colab'
 import '../../src/styles.css'
 import '../../src/sandbox.css'
 import './webview.css'
@@ -31,6 +31,12 @@ let lastText = ''
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const $ = (id: string) => document.getElementById(id)!
+
+/** "Open in editor": saves the lab's GitHub notebook next to the lab and opens it here (extension only). */
+const notebookButtonHtml = (l: Lab) =>
+  labNotebook(l.colab)
+    ? `<button type="button" class="sandbox-btn colab-btn" data-act="notebook" title="${esc(NOTEBOOK_TITLE)}"><svg viewBox="0 0 24 24" aria-hidden="true">${COLAB_ICON_PATHS}</svg>${esc(NOTEBOOK_LABEL)}<small>Notebook</small></button>`
+    : ''
 
 /* Follow VS Code's light/dark theme */
 function syncTheme() {
@@ -68,7 +74,7 @@ function render(keepScroll = false) {
     <div class="lab-head">
       <h1>${esc(lab.title)}</h1>
       <p>${esc(s.label)} of ${esc(steps[steps.length - 1].badge)}${left ? ` · ${left} min left` : ''}</p>
-      ${lab.sandbox || lab.colab ? `<div class="sandbox-row">${sandboxButtonHtml(lab.sandbox, false)}${colabButtonHtml(lab.colab, false)}</div>` : ''}
+      ${lab.sandbox || lab.colab ? `<div class="sandbox-row">${sandboxButtonHtml(lab.sandbox, false)}${colabButtonHtml(lab.colab, false)}${notebookButtonHtml(lab)}</div>` : ''}
     </div>
     <nav class="rail" aria-label="Steps"><ol>${steps
       .map(
@@ -123,6 +129,7 @@ document.addEventListener('click', (e) => {
   if (act === 'prev') go(index - 1)
   else if (act === 'next') go(index + 1)
   else if (act === 'finish') finish()
+  else if (act === 'notebook') vscode.postMessage({ type: 'notebook' })
   else if (act === 'close' || (t.classList.contains('scrim') && !t.closest('.congrats'))) closeFinish()
   else if (act === 'restart') {
     closeFinish()

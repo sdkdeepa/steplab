@@ -173,6 +173,10 @@ These links work:
 - A Colab link: `https://colab.research.google.com/github/...` or `https://colab.research.google.com/drive/FILE_ID`
 - A notebook in Google Drive: `https://drive.google.com/file/d/FILE_ID/view` (share it with **Anyone with the link**)
 
+**In VS Code or Antigravity:** if the notebook is on GitHub, the StepLab preview also shows **Open in editor**. It saves a copy as `notebooks/<name>.ipynb` next to your lab and opens it in the editor (it asks before replacing a copy you already have). To run it on Colab's free servers, install Google's [Colab extension](https://marketplace.visualstudio.com/items?itemName=google.colab) (also on Open VSX) and pick **Colab** as the kernel. Any other Jupyter kernel works too. Drive notebooks open in Colab in the browser.
+
+> Note: A notebook running on a Colab server can't read files on your computer. If the lab needs data files, load them from a URL in the notebook, or upload them in Colab.
+
 > Tip: Add a last step that reminds attendees to stop their codespace at [github.com/codespaces](https://github.com/codespaces) so it stops using their free hours.
 
 See [`public/labs/template.md`](public/labs/template.md) for every feature, and [`public/labs/example-steplab.md`](public/labs/example-steplab.md) for a short real lab.
@@ -345,7 +349,8 @@ src/
   lib/claatHtml.ts           Converts exported CLaaT folders (index.html) into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab
   lib/sandbox.ts             Reads `sandbox:` and builds the Launch sandbox button
-  lib/colab.ts               Reads `colab:` and builds the Open in Colab button
+  lib/colab.ts               Reads `colab:`, builds the Open in Colab button, finds the notebook to download
+  lib/frontMatter.ts         Reads a lab's front matter (shared by the parser and the extension)
   lib/routes.ts              /sample-template, /sample and /format addresses
   components/Home.tsx        Landing page
   components/FormatPage.tsx  Format guide page (/format) and the mobile languages section
