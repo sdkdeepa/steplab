@@ -2,7 +2,7 @@
   "name": "steplab",
   "displayName": "StepLab: Codelabs from Markdown",
   "description": "Write a step-by-step codelab in one markdown file (## Step 0, ## Step 1…) and preview it live: steps, timer, slides, YouTube, copyable code and a finish line. Export it as one HTML file.",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "publisher": "sdkdeepa",
   "author": {
     "name": "Deepa Subramanian"
@@ -79,6 +79,11 @@
         "icon": "$(notebook)"
       },
       {
+        "command": "steplab.reopenHtml",
+        "title": "Reopen Downloaded HTML for Editing",
+        "category": "StepLab"
+      },
+      {
         "command": "steplab.importClaat",
         "title": "Convert CLaaT Codelab to StepLab",
         "category": "StepLab"
@@ -112,6 +117,11 @@
         }
       ],
       "explorer/context": [
+        {
+          "command": "steplab.reopenHtml",
+          "when": "resourceExtname == .html || resourceExtname == .htm",
+          "group": "steplab"
+        },
         {
           "command": "steplab.importClaat",
           "when": "resourceExtname == .md || resourceExtname == .html",

@@ -6,6 +6,7 @@ import { convertClaat, looksLikeClaat } from '../../src/lib/claat'
 import { convertClaatHtml, isClaatHtml } from '../../src/lib/claatHtml'
 import { readColab, labNotebook, looksLikeNotebook } from '../../src/lib/colab'
 import { readFrontMatter } from '../../src/lib/frontMatter'
+import { reopenStepLabHtml, dataUrlBytes, safeImagePath } from '../../src/lib/reopen'
 
 /** Same rule as the web app: "## Step 3: Title", "# Step 2 - Title", "### STEP 1. Title", "## Step 4 · Title". */
 const STEP_HEADING = /^#{1,3}\s*step\s*(\d+)\s*[:.)\-–—·•|]?\s*(.*)$/i
@@ -392,6 +393,143 @@ async function convertClaatAt(target: vscode.Uri | undefined, ifExists: 'ask' | 
   return out
 }
 
+/* ---------- downloaded StepLab .html → editable .md ---------- */
+const REOPEN_MAX_BYTES = 60_000_000
+
+const isHtmlUri = (u: vscode.Uri) => /\.html?$/i.test(u.path)
+
+/**
+ * Turns a lab downloaded from StepLab (.html) back into an editable .md, with its images,
+ * next to the .html. Never replaces a file without asking. The .html is never changed.
+ */
+async function reopenDownloadedHtml(ctx: vscode.ExtensionContext, target?: vscode.Uri) {
+  let uri = target
+  if (!uri) {
+    const active = vscode.window.activeTextEditor?.document
+    if (active && !active.isUntitled && isHtmlUri(active.uri)) uri = active.uri
+  }
+  if (!uri) {
+    const picked = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      filters: { 'StepLab download': ['html', 'htm'] },
+      title: 'Choose a lab you downloaded from StepLab (.html)',
+    })
+    if (!picked?.length) return
+    uri = picked[0]
+  }
+  const name = path.basename(uri.path)
+
+  let text: string
+  try {
+    const stat = await vscode.workspace.fs.stat(uri)
+    if (stat.size > REOPEN_MAX_BYTES) {
+      vscode.window.showErrorMessage(`${name} is too large to reopen.`)
+      return
+    }
+    text = Buffer.from(await vscode.workspace.fs.readFile(uri)).toString('utf8')
+  } catch {
+    vscode.window.showErrorMessage(`Couldn't read ${name}.`)
+    return
+  }
+
+  const r = reopenStepLabHtml(text)
+  if (!r.ok) {
+    if (r.reason === 'not-steplab' && isClaatHtml(text)) {
+      const pick = await vscode.window.showInformationMessage(
+        `${name} is an old CLaaT codelab, not a StepLab download. Convert it to StepLab instead?`,
+        'Convert',
+      )
+      if (pick) vscode.commands.executeCommand('steplab.importClaat', uri)
+      return
+    }
+    const why =
+      r.reason === 'not-steplab'
+        ? `${name} wasn't downloaded from StepLab, so there's no lab inside it to reopen.`
+        : r.reason === 'old-version'
+          ? `${name} was downloaded with an older version of StepLab, so it can't be reopened. Labs you export from now on can be.`
+          : `${name} looks damaged and can't be reopened.`
+    vscode.window.showWarningMessage(why)
+    return
+  }
+
+  // Where the .md goes: next to the .html, same name. Ask before replacing.
+  const folder = vscode.Uri.joinPath(uri, '..')
+  let mdUri = vscode.Uri.joinPath(folder, name.replace(/\.html?$/i, '') + '.md')
+  if (await exists(mdUri)) {
+    const pick = await vscode.window.showWarningMessage(
+      `${path.basename(mdUri.path)} already exists and may have your changes. Replace it, or save the reopened lab under another name?`,
+      { modal: true },
+      'Replace',
+      'Save as…',
+    )
+    if (!pick) return
+    if (pick === 'Save as…') {
+      const picked = await vscode.window.showSaveDialog({
+        defaultUri: vscode.Uri.joinPath(folder, name.replace(/\.html?$/i, '') + '-reopened.md'),
+        filters: { Markdown: ['md'] },
+        saveLabel: 'Save lab',
+      })
+      if (!picked) return
+      mdUri = picked
+    }
+  }
+  const mdFolder = vscode.Uri.joinPath(mdUri, '..')
+
+  // Images go where the markdown expects them (img/a.png → img/a.png next to the .md).
+  const images: { uri: vscode.Uri; bytes: Uint8Array; shown: string }[] = []
+  let skipped = 0
+  for (const img of r.images) {
+    const rel = safeImagePath(img.path)
+    if (!rel) {
+      if (!/^https?:/i.test(img.path)) skipped++ // links keep working as links
+      continue
+    }
+    const bytes = dataUrlBytes(img.dataUrl)
+    if (!bytes) {
+      skipped++
+      continue
+    }
+    images.push({ uri: vscode.Uri.joinPath(mdFolder, ...rel.split('/')), bytes, shown: rel })
+  }
+  const existing: typeof images = []
+  for (const img of images) if (await exists(img.uri)) existing.push(img)
+  let replaceImages = false
+  if (existing.length) {
+    const list = existing.slice(0, 3).map((i) => i.shown).join(', ') + (existing.length > 3 ? ` and ${existing.length - 3} more` : '')
+    const pick = await vscode.window.showWarningMessage(
+      `${existing.length === 1 ? 'An image' : `${existing.length} images`} already exist${existing.length === 1 ? 's' : ''} (${list}). Keep yours, or replace with the ones from ${name}?`,
+      { modal: true },
+      'Keep mine',
+      'Replace',
+    )
+    if (!pick) return
+    replaceImages = pick === 'Replace'
+  }
+
+  let written = 0
+  try {
+    await vscode.workspace.fs.writeFile(mdUri, Buffer.from(r.markdown, 'utf8'))
+    for (const img of images) {
+      if (!replaceImages && existing.includes(img)) continue
+      await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(img.uri, '..'))
+      await vscode.workspace.fs.writeFile(img.uri, img.bytes)
+      written++
+    }
+  } catch (err) {
+    vscode.window.showErrorMessage(`Couldn't save the reopened lab. ${err instanceof Error ? err.message : String(err)}`)
+    return
+  }
+
+  const doc = await vscode.workspace.openTextDocument(mdUri)
+  await vscode.window.showTextDocument(doc)
+  Preview.show(ctx, doc)
+  const saved = written ? ` and ${written} image${written === 1 ? '' : 's'}` : ''
+  vscode.window.showInformationMessage(
+    `Reopened for editing: ${path.basename(mdUri.path)}${saved}. ${name} is unchanged.` +
+      (skipped ? ` ${skipped} image${skipped === 1 ? '' : 's'} couldn't be saved; check the image paths in the lab.` : ''),
+  )
+}
+
 /* ---------- lab notebook → open and run it in the editor ---------- */
 const NOTEBOOK_MAX_BYTES = 25 * 1024 * 1024
 const COLAB_EXTENSION = 'google.colab'
@@ -612,6 +750,8 @@ export function activate(ctx: vscode.ExtensionContext) {
       )
     }),
 
+    vscode.commands.registerCommand('steplab.reopenHtml', (target?: vscode.Uri) => reopenDownloadedHtml(ctx, target)),
+
     vscode.commands.registerCommand('steplab.openNotebook', () => {
       const doc = activeLab() ?? Preview.currentDoc()
       if (!doc) return vscode.window.showInformationMessage('Open a markdown (.md) lab file first.')
@@ -622,6 +762,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     vscode.workspace.onDidOpenTextDocument((d) => {
       lint(d, diagnostics)
       offerClaatImport(d)
+      offerReopen(d)
     }),
     vscode.workspace.onDidChangeTextDocument((e) => lint(e.document, diagnostics)),
     vscode.workspace.onDidCloseTextDocument((d) => diagnostics.delete(d.uri)),
@@ -629,6 +770,7 @@ export function activate(ctx: vscode.ExtensionContext) {
   vscode.workspace.textDocuments.forEach((d) => {
     lint(d, diagnostics)
     offerClaatImport(d)
+    offerReopen(d)
   })
 }
 
@@ -648,6 +790,20 @@ async function offerClaatImport(doc: vscode.TextDocument) {
   )
   if (choice === 'StepLab HTML') vscode.commands.executeCommand('steplab.exportClaatHtml', doc.uri)
   else if (choice === 'Editable .md') vscode.commands.executeCommand('steplab.importClaat', doc.uri)
+}
+
+// Offer to reopen once per file per session when a StepLab download is opened as text.
+async function offerReopen(doc: vscode.TextDocument) {
+  if (doc.uri.scheme !== 'file' || doc.languageId !== 'html' || offered.has(doc.uri.toString())) return
+  const text = doc.getText()
+  if (!text.includes('steplab-source') || !reopenStepLabHtml(text).ok) return
+  offered.add(doc.uri.toString())
+  const choice = await vscode.window.showInformationMessage(
+    `${path.basename(doc.uri.fsPath)} is a lab downloaded from StepLab. Reopen it as an editable .md? (The .html stays as it is.)`,
+    'Reopen for editing',
+    'Not now',
+  )
+  if (choice === 'Reopen for editing') vscode.commands.executeCommand('steplab.reopenHtml', doc.uri)
 }
 
 export function deactivate() {}

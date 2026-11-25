@@ -1,6 +1,7 @@
 import { readImages, isImageFile, isLabFile, type Assets } from './assets'
 import { parseLab } from './parser'
 import { convertClaat, looksLikeClaat } from './claat'
+import { reopenStepLabHtml } from './reopen'
 
 export const isHtmlFile = (f: File) => /\.html?$/i.test(f.name) || f.type === 'text/html'
 
@@ -19,28 +20,20 @@ const fileKey = (src: string) => {
 
 /** Reads a lab downloaded from StepLab back into markdown + its images. */
 function reopenHtml(html: string, name: string): Prepared {
-  const doc = new DOMParser().parseFromString(html, 'text/html')
-  const isStepLab = doc.querySelector('meta[name="generator"][content="StepLab"]')
-  const src = doc.getElementById('steplab-source')
-  if (!isStepLab)
-    return { ok: false, error: `"${name}" isn't a StepLab lab. Upload the .md file you wrote (and its images).` }
-  if (!src?.textContent)
-    return {
-      ok: false,
-      error: `"${name}" was downloaded with an older version of StepLab, so it can't be reopened for editing. Upload the .md file you wrote instead. Labs you download from now on can be reopened.`,
-    }
-  let markdown = ''
-  try {
-    markdown = JSON.parse(src.textContent)
-  } catch {
+  const r = reopenStepLabHtml(html)
+  if (!r.ok) {
+    if (r.reason === 'not-steplab')
+      return { ok: false, error: `"${name}" isn't a StepLab lab. Upload the .md file you wrote (and its images).` }
+    if (r.reason === 'old-version')
+      return {
+        ok: false,
+        error: `"${name}" was downloaded with an older version of StepLab, so it can't be reopened for editing. Upload the .md file you wrote instead. Labs you download from now on can be reopened.`,
+      }
     return { ok: false, error: `"${name}" looks damaged and can't be reopened. Upload the .md file instead.` }
   }
   const assets: Assets = {}
-  doc.querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
-    const s = img.getAttribute('src') || ''
-    if (s.startsWith('data:')) assets[fileKey(img.dataset.src!)] = s
-  })
-  return { ok: true, markdown, name, assets, reopened: true }
+  for (const img of r.images) assets[fileKey(img.path)] = img.dataUrl
+  return { ok: true, markdown: r.markdown, name, assets, reopened: true }
 }
 
 /**
