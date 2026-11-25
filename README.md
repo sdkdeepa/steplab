@@ -345,6 +345,7 @@ src/
   lib/sanitize.ts            DOMPurify with an allow-list for embeds
   lib/assets.ts              Images uploaded with a lab
   lib/importFiles.ts         Opens a .md + images, or reopens a downloaded .html
+  lib/reopen.ts              Reads a downloaded .html back into markdown + images (shared by the website and the extension)
   lib/claat.ts               Converts CLaaT .md codelabs into StepLab labs
   lib/claatHtml.ts           Converts exported CLaaT folders (index.html) into StepLab labs
   lib/exportHtml.ts          Builds the downloadable single-file lab

@@ -17,6 +17,8 @@ Write a step-by-step codelab in **one markdown file** and see it as an interacti
 
 **Have an old CLaaT codelab?** Right-click its `.md` or `index.html` and choose `StepLab: Convert CLaaT Codelab to StepLab HTML`. To edit it first, choose `StepLab: Convert CLaaT Codelab to StepLab` instead and continue from step 3.
 
+**Only have the HTML you exported?** Right-click it and choose `StepLab: Reopen Downloaded HTML for Editing`. StepLab saves the lab's `.md` and its images next to it and opens the preview, so you can keep editing. Works for labs exported from the editor or the website.
+
 ## Run the lab's notebook with Colab
 
 ![Opening a lab's notebook and connecting it to Colab](https://raw.githubusercontent.com/sdkdeepa/steplab/main/extension/media/demo-colab.gif)
@@ -36,6 +38,7 @@ Open the Command Palette with `Ctrl+Shift+P`, or `Cmd+Shift+P` on Mac.
 | `StepLab: Open Preview to the Side` | Shows the lab beside your file (`Cmd+Alt+L` / `Ctrl+Alt+L`). |
 | `StepLab: Insert Next Step` | Adds `## Step N:` with the right number (`Cmd+Alt+S` / `Ctrl+Alt+S`). |
 | `StepLab: Export as HTML` | Saves the lab as one HTML file, images included. |
+| `StepLab: Reopen Downloaded HTML for Editing` | Turns a StepLab `.html` back into an editable `.md`, with its images. |
 | `StepLab: Open Lab Notebook in Editor` | Saves the lab's `colab:` notebook next to the lab and opens it here. |
 | `StepLab: Convert CLaaT Codelab to StepLab` | Turns a CLaaT codelab into an editable StepLab `.md`. |
 | `StepLab: Convert CLaaT Codelab to StepLab HTML` | Turns a CLaaT codelab straight into a StepLab HTML page. |

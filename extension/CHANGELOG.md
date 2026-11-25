@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.10
+- New: **Reopen Downloaded HTML for Editing.** Only have the `.html` you exported? Right-click it (or run the command) and StepLab saves the lab's `.md` and its images next to it, then opens the preview. It asks before replacing any file, and the `.html` is never changed. StepLab also offers this when you open a StepLab `.html` in the editor. The website already does this when you upload a downloaded lab.
+
 ## 0.1.9
 - Fixed: the two demo GIFs on the extension page (Quick Start and Colab) now load.
 
