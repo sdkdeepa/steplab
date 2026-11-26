@@ -464,3 +464,10 @@ button { font: inherit; cursor: pointer }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important }
 }
+
+/* App messages (src/components/AppStatus.tsx): new version, works offline, you're offline. */
+.app-status { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 70; transform: translateX(-50%); display: grid; gap: 8px; width: max-content; max-width: calc(100vw - 32px) }
+.app-status:empty { display: none }
+.app-status-msg { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid #ffffff22; border-radius: 12px; background: var(--ink); color: #fff; font-size: 14px; box-shadow: var(--shadow); animation: fade .2s }
+.app-status-msg .btn { flex: none }
+.app-status-offline { background: #3a2a00; border-color: #ffcc4d55 }

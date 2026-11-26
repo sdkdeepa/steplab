@@ -12,3 +12,7 @@ extension
 deepa-the-author.md
 my-labs
 *.tsbuildinfo
+test-results
+playwright-report
+aqg-report
+e2e

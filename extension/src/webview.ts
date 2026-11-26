@@ -1,5 +1,5 @@
 /**
- * Runs inside the VS Code / Antigravity preview panel.
+ * Runs inside the VS Code / Antigravity IDE preview panel.
  * Reuses the web app's code (../../src/lib) so the preview matches the website exactly.
  */
 import confetti from 'canvas-confetti'

@@ -30,7 +30,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # Safety switch for the offline app: set the repository variable STEPLAB_PWA to "off"
+      # (Settings → Secrets and variables → Actions → Variables) and run this workflow.
+      # It publishes a service worker that removes itself and every StepLab cache from
+      # everyone's browser. Delete the variable and deploy again to turn the app back on.
       - run: npm run build
+        env:
+          STEPLAB_PWA: ${{ vars.STEPLAB_PWA }}
       # GitHub Pages has no rewrite rules. Serving the app as 404.html makes
       # /sample and /sample-template load the app instead of an error page.
       - run: cp dist/index.html dist/404.html

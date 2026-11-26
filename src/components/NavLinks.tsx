@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { install, pwaState, subscribe } from '../lib/pwa'
 
 export interface NavActions {
   onHome: () => void
@@ -16,9 +17,10 @@ function Item({ label, onClick }: { label: string; onClick: () => void }) {
   )
 }
 
-/** Home · Upload .md · Start from a template · Format. Inline on wide screens, a menu on narrow ones. */
+/** Home · Upload .md · Start from a template · Format (· Install app, on desktop when the browser offers it). Inline on wide screens, a menu on narrow ones. */
 export function NavLinks({ onHome, onUpload, onTemplate, onFormat, variant }: NavActions & { variant: 'home' | 'lab' }) {
   const [open, setOpen] = useState(false)
+  const { canInstall } = useSyncExternalStore(subscribe, pwaState)
   const wrap = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export function NavLinks({ onHome, onUpload, onTemplate, onFormat, variant }: Na
       <Item label="Upload markdown" onClick={run(onUpload)} />
       <Item label="Start from a template" onClick={run(onTemplate)} />
       <Item label="Format" onClick={run(onFormat)} />
+      {canInstall && <Item label="Install app" onClick={run(() => void install())} />}
     </>
   )
 

@@ -11,5 +11,5 @@
     "allowImportingTsExtensions": false
   },
   "include": ["src", "../src/lib", "../src/config.ts", "../src/vite-env.d.ts"],
-  "exclude": ["../src/lib/__tests__"]
+  "exclude": ["../src/lib/__tests__", "../src/lib/pwa.ts"]
 }

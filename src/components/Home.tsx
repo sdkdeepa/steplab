@@ -71,8 +71,8 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
           </p>
           <ul className="hero-points">
             <li>Runs in your browser. Your file never leaves your computer.</li>
-            <li>No server, no account, no install.</li>
-            <li>Comes in your favorite IDE: VS Code and Antigravity.</li>
+            <li>No signups required.</li>
+            <li>Comes in your favorite IDE: VS Code and Antigravity IDE.</li>
             <li>Labs can launch a live sandbox, and StepLab runs in your own Docker container.</li>
             <li>Supports Mobile languages: Kotlin, Swift and Objective-C.</li>
             <li>Open source.</li>
@@ -91,7 +91,7 @@ export function Home({ onOpen, onReadFiles, nav, error }: Props) {
           <Illustration />
           <h2 className="on-pointer">Drop your .md file here</h2>
           <h2 className="on-touch">Open your .md file</h2>
-          <p className="drop-sub on-pointer">Drop its images too. You can also reopen a lab you downloaded (.html), or drop an old CLaaT folder to convert it.</p>
+          <p className="drop-sub on-pointer">Drop its images too. You can also reopen previously downloaded StepLab (.html), or drop an old CLaaT folder to convert it.</p>
           <p className="drop-sub on-touch">Pick it from Files, Drive or Downloads. Select its images at the same time.</p>
           {message && (
             <p className="drop-error" role="alert">

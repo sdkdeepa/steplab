@@ -1,11 +1,11 @@
-# Publishing StepLab (VS Code + Antigravity)
+# Publishing StepLab (VS Code + Antigravity IDE)
 
-Antigravity installs extensions from **Open VSX** (open-vsx.org). VS Code uses the **Visual Studio Marketplace**. Publish the same `.vsix` file to both stores. Neither has an app-store-style review queue.
+Antigravity IDE installs extensions from **Open VSX** (open-vsx.org). VS Code uses the **Visual Studio Marketplace**. Publish the same `.vsix` file to both stores. Neither has an app-store-style review queue.
 
 ## 0. Try it yourself first
 
-Both VS Code and Antigravity can install a `.vsix` file directly:
-Extensions view → `…` menu → **Install from VSIX…** → pick `steplab-0.1.0.vsix`. In Antigravity you can also drag the file into the Extensions pane.
+Both VS Code and Antigravity IDE can install a `.vsix` file directly:
+Extensions view → `…` menu → **Install from VSIX…** → pick `steplab-0.1.0.vsix`. In Antigravity IDE you can also drag the file into the Extensions pane.
 
 Then open any `.md` lab and press ▶ in the editor title bar, or `Cmd/Ctrl+Alt+L`.
 
@@ -24,7 +24,7 @@ npm install
 npm run package        # creates steplab-<version>.vsix
 ```
 
-## 2. Open VSX (for Antigravity), one-time setup
+## 2. Open VSX (for Antigravity IDE), one-time setup
 
 1. Create an account at **accounts.eclipse.org**, and put your **GitHub username** in the profile.
 2. Go to **open-vsx.org**, log in with GitHub, then open your avatar → **Settings** → **Log in with Eclipse**.
