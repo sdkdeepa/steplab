@@ -1,6 +1,6 @@
 # Checks every pull request before it can be merged into main.
-# The three job names below ("Website", "Extension", "Docker image") are the
-# checks to mark as required in the main branch ruleset.
+# The job names below ("Website", "Extension", "Docker image", "Quality gate") are
+# the checks to mark as required in the main branch ruleset.
 name: Checks
 
 on:
@@ -64,3 +64,39 @@ jobs:
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  # Unit and end-to-end tests, then AI Quality Gate decides PASS / WARN / BLOCK
+  # from their results (quality-gate.yml). Internal only: nothing here changes the
+  # website, the extension or the Docker image, and no AI is involved.
+  quality-gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests (Vitest)
+        run: npm run test:ci
+      # The steps below run even if the unit tests failed, so the gate sees every result.
+      - name: Build the site
+        if: ${{ !cancelled() }}
+        run: npm run build
+      - name: Install the test browser
+        if: ${{ !cancelled() }}
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests (Playwright)
+        if: ${{ !cancelled() }}
+        run: npm run test:e2e
+      - name: Quality gate
+        if: ${{ !cancelled() }}
+        uses: sdkdeepa/ai-quality-gate@v1
+      - name: Keep Playwright traces of failed tests
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-traces
+          path: test-results/e2e-artifacts
+          if-no-files-found: ignore
+          retention-days: 7

@@ -1,7 +1,13 @@
 # Changelog
 
+## 0.1.11
+- Clearer Colab steps on the extension page: what happens when you sign in, and how to switch to Colab if a kernel is already chosen.
+- Store tags: added `gde`, `devrel` and `developer-advocate`.
+- The reopen command is now named **Reopen Downloaded StepLab HTML for Editing**, so it's clear it only works on HTML downloaded from StepLab.
+- The website (steplab.dev) can now be installed as a desktop app that works offline. The extension works as before.
+
 ## 0.1.10
-- New: **Reopen Downloaded HTML for Editing.** Only have the `.html` you exported? Right-click it (or run the command) and StepLab saves the lab's `.md` and its images next to it, then opens the preview. It asks before replacing any file, and the `.html` is never changed. StepLab also offers this when you open a StepLab `.html` in the editor. The website already does this when you upload a downloaded lab.
+- New: **Reopen Downloaded StepLab HTML for Editing.** Only have the StepLab HTML file you downloaded (from **Export as HTML** or the website)? Right-click it (or run the command) and StepLab saves the lab's `.md` and its images next to it, then opens the preview. It asks before replacing any file, and the downloaded StepLab HTML is never changed. StepLab also offers this when you open a downloaded StepLab HTML file in the editor. The website already does this when you upload a downloaded StepLab HTML file. Other HTML files can't be reopened.
 
 ## 0.1.9
 - Fixed: the two demo GIFs on the extension page (Quick Start and Colab) now load.

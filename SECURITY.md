@@ -14,7 +14,7 @@ You'll get a reply as soon as possible. Please give a reasonable amount of time 
 
 - The StepLab website and the labs it renders, including markdown that could run unwanted code
 - Downloaded single-file HTML labs
-- The VS Code / Antigravity extension
+- The VS Code / Antigravity IDE extension
 - The Docker image `ghcr.io/sdkdeepa/steplab`
 
 ## Supported versions

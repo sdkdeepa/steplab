@@ -9,7 +9,7 @@ Write `## Step 0`, `## Step 1`, `## Step 2`… and drop the file in. StepLab bui
 - **Free to host.** It's a static site, so it runs on Netlify's free plan, GitHub Pages or any static host.
 - **Light and dark themes.** It follows the device setting until the visitor picks one, and downloaded labs have the toggle too.
 - **Phone-friendly.** Swipe between steps, a full-screen editor, and downloads that work on phones.
-- **Editor extension.** A live preview for VS Code and Antigravity (see below).
+- **Editor extension.** A live preview for VS Code and Antigravity IDE (see below).
 
 > Inspired by Google's [codelabs tools](https://github.com/googlecodelabs/tools) (`claat`), which is no longer maintained. StepLab is a new, simpler project, not a fork.
 
@@ -44,6 +44,17 @@ npm run dev        # open http://localhost:5173
 - **Upload a markdown file** opens a pop-up with two tabs: **StepLab lab** and **Old CLaaT codelab**. Drag in your `.md` file **and its images** together, or browse for them. Labs downloaded from StepLab (`.html`) can be uploaded too, and they reopen for editing with their images.
 - **Edit** shows the markdown beside the lab with a live preview, and **Save .md** downloads it.
 - **Download HTML** saves one self-contained file, with images packed in.
+
+### Use it as a desktop app (works offline)
+
+On a computer, StepLab can be installed as an app and works without the internet after your first visit.
+
+- **Install:** in Chrome or Edge, click **Install app** at the top of StepLab, or the install icon in the address bar. In Safari on a Mac, choose **File → Add to Dock**.
+- **Offline:** writing, previewing, uploading and **Download HTML** all work. **Launch sandbox**, **Open in Colab** and videos still need the internet, and StepLab tells you when you're offline.
+- **Updates:** when a new version is out, StepLab shows **A new version of StepLab is ready** with a **Reload** button.
+- **Private as before:** only StepLab itself is saved for offline use. Your labs and images are never stored or sent anywhere.
+- **Phones and tablets** use StepLab as a normal website, with no install and no offline copy.
+- **Something stuck?** Open StepLab with `?reset` at the end of the address (for example `https://steplab.dev/?reset`). It removes the offline copy and loads the latest version.
 
 ## Writing a lab
 
@@ -173,7 +184,7 @@ These links work:
 - A Colab link: `https://colab.research.google.com/github/...` or `https://colab.research.google.com/drive/FILE_ID`
 - A notebook in Google Drive: `https://drive.google.com/file/d/FILE_ID/view` (share it with **Anyone with the link**)
 
-**In VS Code or Antigravity:** if the notebook is on GitHub, the StepLab preview also shows **Open in editor**. It saves a copy as `notebooks/<name>.ipynb` next to your lab and opens it in the editor (it asks before replacing a copy you already have). To run it on Colab's free servers, install Google's [Colab extension](https://marketplace.visualstudio.com/items?itemName=google.colab) (also on Open VSX) and pick **Colab** as the kernel. Any other Jupyter kernel works too. Drive notebooks open in Colab in the browser.
+**In VS Code or Antigravity IDE:** if the notebook is on GitHub, the StepLab preview also shows **Open in editor**. It saves a copy as `notebooks/<name>.ipynb` next to your lab and opens it in the editor (it asks before replacing a copy you already have). To run it on Colab's free servers, install Google's [Colab extension](https://marketplace.visualstudio.com/items?itemName=google.colab) (also on Open VSX) and pick **Colab** as the kernel. Any other Jupyter kernel works too. Drive notebooks open in Colab in the browser.
 
 > Note: A notebook running on a Colab server can't read files on your computer. If the lab needs data files, load them from a URL in the notebook, or upload them in Colab.
 
@@ -220,7 +231,7 @@ A downloaded lab is one HTML file, so any static host works (GitHub Pages, Netli
 Have old CLaaT codelabs? StepLab converts both the `.md` you wrote and the folder `claat export` made (`index.html`, `codelab.json`, `img/`). Your original files are never changed.
 
 - **On the website:** click **Upload a markdown file**, choose the **Old CLaaT codelab** tab, and pick or drag in the exported folder. It opens as a StepLab lab, ready to **Download HTML** or **Save .md**.
-- **In VS Code / Antigravity:** right-click the folder's `index.html` (or a CLaaT `.md`) and choose **Convert CLaaT Codelab to StepLab HTML** for the finished page in one step, or **Convert CLaaT Codelab to StepLab** for an editable `.steplab.md`. StepLab also offers both when you open a CLaaT codelab.
+- **In VS Code / Antigravity IDE:** right-click the folder's `index.html` (or a CLaaT `.md`) and choose **Convert CLaaT Codelab to StepLab HTML** for the finished page in one step, or **Convert CLaaT Codelab to StepLab** for an editable `.steplab.md`. StepLab also offers both when you open a CLaaT codelab.
 
 ### Sharing a lab
 
@@ -317,10 +328,11 @@ Edit the lab, save, click `Done` and then refresh the page. The change shows wit
 
 - **Windows:** keep Docker Desktop on **Linux containers** (the default). StepLab's image is a Linux image.
 - **Another port:** change the first number, for example `-p 3000:8080`, then open `localhost:3000`.
+- **Desktop app and offline use** work at `http://localhost:8080`, including when Docker runs inside a virtual machine and you open the browser in that machine. From another computer, `http://<machine address>:8080` works as a normal website without install or offline, because browsers only allow offline apps on HTTPS or `localhost`. For the full app there, either put an HTTPS reverse proxy (such as Caddy, nginx or Traefik) in front of port 8080, or open an SSH tunnel and use `localhost`: `ssh -L 8080:localhost:8080 you@machine-address`.
 - **Labs with a sandbox** keep their **Launch sandbox** button. The sandbox itself still runs in GitHub Codespaces.
 - **Forks** publish their own image: push a version tag (for example `git tag v1.0.0 && git push origin v1.0.0`) and `.github/workflows/docker.yml` builds `ghcr.io/your-name/steplab`. Then make the package public under **your profile → Packages → steplab → Package settings**.
 
-## VS Code and Antigravity extension
+## VS Code and Antigravity IDE extension
 
 `extension/` holds the StepLab editor extension: a live preview beside your markdown, Export as HTML, snippets (`step`, `step0`, `slides`, `youtube`…) and warnings for out-of-order steps and missing images. It reuses `src/lib`, so the preview matches the website.
 
@@ -330,7 +342,7 @@ npm install
 npm run package      # builds steplab-<version>.vsix
 ```
 
-Install the `.vsix` with Extensions → `…` → **Install from VSIX**. To publish to Open VSX (used by Antigravity) and the VS Code Marketplace, see [`extension/PUBLISHING.md`](extension/PUBLISHING.md).
+Install the `.vsix` with Extensions → `…` → **Install from VSIX**. To publish to Open VSX (used by Antigravity IDE) and the VS Code Marketplace, see [`extension/PUBLISHING.md`](extension/PUBLISHING.md).
 
 ## Project structure
 
@@ -366,7 +378,7 @@ docker/nginx.conf            nginx settings for the Docker image
 .github/workflows/ci.yml     Checks every pull request: tests, website, extension, Docker
 .github/workflows/docker.yml Publishes the Docker image to ghcr.io when a version tag is pushed
 .github/CODEOWNERS           Every change needs the maintainer's review
-extension/                   VS Code / Antigravity extension
+extension/                   VS Code / Antigravity IDE extension
 ```
 
 ## Mobile app labs

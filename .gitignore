@@ -160,3 +160,8 @@ vite.config.ts.timestamp-*
 .nx/migrate-runs
 .DS_Store
 extension/*.vsix
+
+# Test results and the quality gate report (made by CI and by local runs)
+test-results/
+playwright-report/
+aqg-report/

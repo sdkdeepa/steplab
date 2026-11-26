@@ -167,7 +167,7 @@ export function UploadDialog({ initialFiles = [], initialError = null, initialMo
                 Drag & drop files here, or <span>browse</span>
               </p>
               <p className="up-big on-touch">Tap to choose files</p>
-              <p className="up-small">Your .md file and its images · or a lab you downloaded from StepLab (.html)</p>
+              <p className="up-small">Your .md file and its images · or previously downloaded StepLab (.html)</p>
             </>
           )}
         </div>

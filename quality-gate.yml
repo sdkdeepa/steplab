@@ -1,0 +1,26 @@
+# StepLab's merge gate, run by the "Quality gate" job in .github/workflows/ci.yml
+# with AI Quality Gate (https://github.com/sdkdeepa/ai-quality-gate). No AI is used:
+# it reads the test results (JUnit XML) and decides PASS, WARN or BLOCK.
+#
+#   unit: Vitest                       (npm run test:ci  → test-results/unit.xml)
+#   e2e:  Playwright, in the built site (npm run test:e2e → test-results/e2e.xml)
+#
+# Light mode, no baseline to maintain. Two rules:
+#   - every e2e test is required: one that fails, is skipped or goes missing BLOCKs;
+#   - a minimum number of tests, so a run can't silently find fewer.
+# Added or removed tests on purpose? Update min_checks below in the same PR.
+version: 1
+project: steplab
+inputs:
+  - type: junit
+    path: test-results/unit.xml
+    suite: unit
+    min_checks: 58
+  - type: junit
+    path: test-results/e2e.xml
+    suite: e2e
+    min_checks: 27
+policy:
+  required: ["e2e::*"]
+output:
+  dir: aqg-report

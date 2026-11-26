@@ -22,7 +22,7 @@ updates:
     open-pull-requests-limit: 3
     ignore:
       # Must match "engines.vscode" in extension/package.json (the oldest editor we support).
-      # Raise both together, by hand, only when we decide to drop older VS Code / Antigravity versions.
+      # Raise both together, by hand, only when we decide to drop older VS Code / Antigravity IDE versions.
       - dependency-name: '@types/vscode'
 
   - package-ecosystem: github-actions

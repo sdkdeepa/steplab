@@ -59,14 +59,30 @@ npm run build          # the website builds
 cd extension && npm run build && cd ..   # the extension builds
 ```
 
-Then test by hand:
+### End-to-end tests
 
-- [ ] Open the sample lab and a lab you wrote. Next, Back and copy buttons work.
-- [ ] Check at **phone width** (about 390 px) and on desktop.
-- [ ] Check **light and dark** themes.
-- [ ] **Download HTML** and open the file. It still works offline.
-- [ ] If you changed the extension: run `npm run package` in `extension/`, install the `.vsix` and try the preview.
-- [ ] If you changed `Dockerfile` or `docker/`: `docker buildx build -t steplab .` and run it.
+`e2e/` has browser tests for every website workflow: writing a lab, uploading a `.md` with images, reopening a downloaded lab, converting CLaaT codelabs, taking a lab (steps, callouts, code, slides, video, finishing), and opening a downloaded lab on its own, offline. They run against the built site:
+
+```bash
+npx playwright install chromium   # once
+npm run build && npm run test:e2e
+```
+
+How they're organised:
+
+- `e2e/fixtures/`: the **master sample files** (labs, a CLaaT codelab, a file StepLab should refuse). Tests only read them. If a run changes one, the run fails.
+- `e2e/pages/`: page objects (`HomePage`, `UploadDialog`, `LabViewer`), handed to tests by `e2e/fixtures.ts`.
+- `e2e/*.spec.ts`: the tests, one file per workflow.
+- **Downloaded files** go into each test's own folder under `test-results/` and are deleted as soon as the test passes. A failed test keeps its downloads so you can open them; the next run starts empty.
+- Tests never reach the internet: anything not served by the local site is blocked.
+
+Find elements the way a person does (`getByRole('button', { name: 'Download HTML' })`), not by CSS class, where you can.
+
+### The quality gate
+
+On every PR, the **Quality gate** check runs the unit and end-to-end tests, then [AI Quality Gate](https://github.com/sdkdeepa/ai-quality-gate) reads their results (`quality-gate.yml`) and decides PASS, WARN or BLOCK. It uses no AI and changes nothing in StepLab itself. Every end-to-end test is required, so a failed, skipped or missing one blocks the PR. The gate's report is attached to the run as `quality-gate-report`.
+
+If you add or remove tests on purpose, update `min_checks` in `quality-gate.yml` in the same PR.
 
 ## Open the pull request
 
@@ -96,6 +112,16 @@ So the website and Docker image go 0.1.4 → 0.1.5 → 0.1.6, while the extensio
 5. **Only if the extension changed:** run `npm run package` in `extension/` and publish the `.vsix` to Open VSX and the VS Code Marketplace (see `extension/PUBLISHING.md`).
 
 Never reuse a version number. The stores and the image registry don't allow it.
+
+### If the offline app ever breaks for people (maintainer only)
+
+StepLab's desktop app keeps a copy of itself in each browser (a service worker). If a release ever leaves people stuck on a broken version:
+
+1. Fix forward if you can: a normal deploy reaches everyone, who see **Reload**.
+2. If not, use the safety switch: in the repo's **Settings → Secrets and variables → Actions → Variables**, add `STEPLAB_PWA` with the value `off`, then run **Deploy to GitHub Pages** (Actions → Run workflow). Everyone's browser removes StepLab's service worker and caches on their next visit, and StepLab keeps working as a normal website.
+3. When it's fixed, delete the variable and deploy again to turn the app back on.
+
+Anyone can also reset their own browser by opening StepLab with `?reset` at the end of the address.
 
 ## Never commit secrets
 
